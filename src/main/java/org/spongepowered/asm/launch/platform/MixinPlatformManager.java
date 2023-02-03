@@ -24,6 +24,7 @@
  */
 package org.spongepowered.asm.launch.platform;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.spongepowered.asm.launch.platform.container.ContainerHandleURI;
 import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.launch.platform.container.IContainerHandle;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -135,6 +137,11 @@ public class MixinPlatformManager {
         this.containers.put(handle, container);
         this.addNestedContainers(handle);
         return container;
+    }
+
+    //Backwards compat (see https://github.com/FalsePattern/GasStation/issues/10)
+    public final MixinContainer addContainer(URI uri) {
+        return addContainer(new ContainerHandleURI(uri));
     }
 
     private MixinContainer createContainerFor(IContainerHandle handle) {

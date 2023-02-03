@@ -371,22 +371,23 @@ public abstract class Injector {
             
             DelegateInitialiser superCall = target.findDelegateInitNode();
             if (!superCall.isPresent) {
-                throw new InjectionError(String.format("Delegate constructor lookup failed for %s target on %s", this.annotationType, this.info));
-            }
-            
-            int superCallIndex = target.indexOf(superCall.insn);
-            int targetIndex = target.indexOf(node.getCurrentTarget());
-            if (targetIndex <= superCallIndex) {
-                if (targetLevel == RestrictTargetLevel.CONSTRUCTORS_AFTER_DELEGATE) {
-                    throw new InvalidInjectionException(this.info, String.format("Found %s targetting a constructor before %s() in injector %s",
-                            this.annotationType, superCall, this));
+                Injector.logger.warn("Suppressed mixin error for backwards compatibility: Delegate constructor lookup failed for {} target on {}", this.annotationType, this.info);
+            } else {
+
+                int superCallIndex = target.indexOf(superCall.insn);
+                int targetIndex = target.indexOf(node.getCurrentTarget());
+                if (targetIndex <= superCallIndex) {
+                    if (targetLevel == RestrictTargetLevel.CONSTRUCTORS_AFTER_DELEGATE) {
+                        throw new InvalidInjectionException(this.info, String.format("Found %s targetting a constructor before %s() in injector %s",
+                                this.annotationType, superCall, this));
+                    }
+
+                    if (!this.isStatic) {
+                        throw new InvalidInjectionException(this.info, String.format("%s handler before %s() invocation must be static in injector %s",
+                                this.annotationType, superCall, this));
+                    }
+                    return;
                 }
-                
-                if (!this.isStatic) {
-                    throw new InvalidInjectionException(this.info, String.format("%s handler before %s() invocation must be static in injector %s",
-                            this.annotationType, superCall, this));
-                }
-                return;
             }
         }
         
