@@ -27,7 +27,7 @@ apply plugin: 'potemkin-modules'
 defaultTasks 'licenseFormat', 'check', 'build'
 
 // Basic project information
-group = 'net.fabricmc'
+group = 'io.github.legacymoddingmc'
 archivesBaseName = 'sponge-mixin'
 version = buildVersion + "+mixin." + upstreamMixinVersion
 
