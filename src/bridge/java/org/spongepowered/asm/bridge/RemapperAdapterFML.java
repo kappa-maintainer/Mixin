@@ -44,6 +44,7 @@ public final class RemapperAdapterFML extends RemapperAdapter {
     
     private RemapperAdapterFML(org.objectweb.asm.commons.Remapper remapper, Method mdUnmap) {
         super(remapper);
+        this.supportsNullArguments = false;
         this.logger.info("Initialised Mixin FML Remapper Adapter with {}", remapper);
         this.mdUnmap = mdUnmap;
     }

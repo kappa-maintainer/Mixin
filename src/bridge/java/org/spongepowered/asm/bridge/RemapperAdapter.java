@@ -38,6 +38,8 @@ public abstract class RemapperAdapter implements IRemapper, IClassRemapper {
 
     protected final ILogger logger = MixinService.getService().getLogger("mixin");
     protected final org.objectweb.asm.commons.Remapper remapper;
+
+    protected boolean supportsNullArguments = true;
     
     public RemapperAdapter(Remapper remapper) {
         this.remapper = remapper;
@@ -51,6 +53,9 @@ public abstract class RemapperAdapter implements IRemapper, IClassRemapper {
     @Override
     public String mapMethodName(String owner, String name, String desc) {
         this.logger.debug("{} is remapping method {}{} for {}", this, name, desc, owner);
+        if(!supportsNullArguments && (owner == null || name == null || desc == null)) {
+            return name;
+        }
         String newName = this.remapper.mapMethodName(owner, name, desc);
         if (!newName.equals(name)) {
             return newName;
@@ -64,6 +69,9 @@ public abstract class RemapperAdapter implements IRemapper, IClassRemapper {
     @Override
     public String mapFieldName(String owner, String name, String desc) {
         this.logger.debug("{} is remapping field {}{} for {}", this, name, desc, owner);
+        if(!supportsNullArguments && (owner == null || name == null || desc == null)) {
+            return name;
+        }
         String newName = this.remapper.mapFieldName(owner, name, desc);
         if (!newName.equals(name)) {
             return newName;
@@ -77,21 +85,33 @@ public abstract class RemapperAdapter implements IRemapper, IClassRemapper {
     @Override
     public String map(String typeName) {
         this.logger.debug("{} is remapping class {}", this, typeName);
+        if(typeName == null) {
+            return typeName;
+        }
         return this.remapper.map(typeName);
     }
     
     @Override
     public String unmap(String typeName) {
+        if(typeName == null) {
+            return typeName;
+        }
         return typeName;
     }
     
     @Override
     public String mapDesc(String desc) {
+        if(desc == null) {
+            return desc;
+        }
         return this.remapper.mapDesc(desc);
     }
     
     @Override
     public String unmapDesc(String desc) {
+        if(desc == null) {
+            return desc;
+        }
         String newDesc = ObfuscationUtil.unmapDescriptor(desc, this);
         return newDesc != null ? newDesc : desc;
     }
