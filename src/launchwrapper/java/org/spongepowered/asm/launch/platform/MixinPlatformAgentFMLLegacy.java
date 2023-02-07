@@ -195,7 +195,7 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
         if (this.handle.getAttribute(MixinPlatformAgentFMLLegacy.MFATT_COREMODCONTAINSMOD) != null) {
             if (this.isIgnoredReparseable()) {
                 MixinPlatformAgentAbstract.logger.debug(
-                        "Ignoring request to add {} to reparseable coremod collection - it is a deobfuscated dependency", this.fileName);
+                        "Ignoring request to add {} to reparseable coremod collection - it is on the class path", this.fileName);
                 return;
             }
             this.addReparseableJar();
@@ -203,7 +203,7 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
     }
 
     private boolean isIgnoredReparseable() {
-        return this.handle.toString().contains("deobfedDeps");
+        return System.getProperty("java.class.path").contains(this.fileName);
     }
 
     /**
