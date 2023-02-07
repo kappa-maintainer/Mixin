@@ -42,9 +42,11 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.launch.platform.container.ContainerHandleURI;
 import org.spongepowered.asm.launch.platform.container.IContainerHandle;
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.MixinEnvironment.Phase;
 import org.spongepowered.asm.mixin.extensibility.IRemapper;
+import org.spongepowered.asm.obfuscation.FMLLegacyDevRemapper;
 import org.spongepowered.asm.service.mojang.MixinServiceLaunchWrapper;
 import org.spongepowered.asm.util.Constants;
 import org.spongepowered.asm.util.IConsumer;
@@ -403,14 +405,19 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
     }
 
     private void injectRemapper() {
+        MixinEnvironment env = MixinEnvironment.getDefaultEnvironment();
         try {
             MixinPlatformAgentAbstract.logger.debug("Creating FML remapper adapter: {}", MixinPlatformAgentFMLLegacy.FML_REMAPPER_ADAPTER_CLASS);
             Class<?> clFmlRemapperAdapter = Class.forName(MixinPlatformAgentFMLLegacy.FML_REMAPPER_ADAPTER_CLASS, true, Launch.classLoader);
             Method mdCreate = clFmlRemapperAdapter.getDeclaredMethod("create");
             IRemapper remapper = (IRemapper)mdCreate.invoke(null);
-            MixinEnvironment.getDefaultEnvironment().getRemappers().add(remapper);
+            env.getRemappers().add(remapper);
         } catch (Exception ex) {
             MixinPlatformAgentAbstract.logger.debug("Failed instancing FML remapper adapter, things will probably go horribly for notch-obf'd mods!");
+        }
+
+        if (env.getOption(MixinEnvironment.Option.REFMAP_REMAP)) {
+            env.getRemappers().add(new FMLLegacyDevRemapper(env));
         }
     }
 
