@@ -181,9 +181,10 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
      * fml to subsequently re-evaluate the container for coremod candidacy.
      * 
      * <p>Further, if the "fml core plugin contains fml mod" flag is set in the
-     * manifest, the container will be manually injected by this agent into the
-     * "reparseable coremods" collection which will cause it to be crawled for
-     * regular mods as well.</p> 
+     * manifest and the mod is not on the boot class path, the container will
+     * be manually injected by this agent into the "reparseable coremods"
+     * collection, which will prevent fml from crawling it multiple times for
+     * regular mods and constructing duplicate mod containers.</p>
      */
     private void loadAsMod() {
         try {
@@ -202,6 +203,16 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
         }
     }
 
+    /**
+     * <p>Reparseable coremods are excluded from being crawled for regular mods
+     * during <i>class path</i> mod discovery, so we must not add mods on the
+     * boot class path to this list.</p>
+     * <p>The reason we use the <i>boot</i> class path is because coremods in
+     * the mods directory have been injected into the class path at this point,
+     * and we <i>do</i> want to mark those as reparseable, so they don't get
+     * crawled during both the <i>class path</i> and <i>mod directory</i> mod
+     * discovery steps.
+     */
     private boolean isIgnoredReparseable() {
         return System.getProperty("java.class.path").contains(this.fileName);
     }
