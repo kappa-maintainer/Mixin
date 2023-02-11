@@ -42,6 +42,7 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.launch.platform.container.ContainerHandleURI;
 import org.spongepowered.asm.launch.platform.container.IContainerHandle;
+import org.spongepowered.asm.mixin.ForgeUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.MixinEnvironment.Phase;
@@ -430,6 +431,15 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
         if (env.getOption(MixinEnvironment.Option.REFMAP_REMAP)) {
             env.getRemappers().add(new FMLLegacyDevRemapper(env));
         }
+    }
+
+    /**
+     * <p>Called after Mixin configs have been loaded. Do Forge-specific initialization.</p>
+     * <p>Note: The mod bootstrapping Mixin must contain an FML plugin for this to get called.</p>
+     */
+    @Override
+    public void initPrimaryContainer() {
+        ForgeUtils.init();
     }
 
     /* (non-Javadoc)
