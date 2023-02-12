@@ -133,7 +133,7 @@ public class FMLLegacyDevRemapper implements IRemapper {
     @Override
     public String mapDesc(String desc) {
         String remapped = descCache.get(desc);
-        if(remapped == null) {
+        if (remapped == null) {
             remapped = desc;
             for (Entry<String, String> entry : this.mappings.entrySet()) {
                 remapped = remapped.replace(entry.getKey(), entry.getValue());

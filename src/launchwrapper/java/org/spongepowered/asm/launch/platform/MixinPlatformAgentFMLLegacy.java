@@ -208,6 +208,7 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
      * <p>Reparseable coremods are excluded from being crawled for regular mods
      * during <i>class path</i> mod discovery, so we must not add mods on the
      * boot class path to this list.</p>
+     *
      * <p>The reason we use the <i>boot</i> class path is because coremods in
      * the mods directory have been injected into the class path at this point,
      * and we <i>do</i> want to mark those as reparseable, so they don't get
@@ -434,8 +435,11 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
     }
 
     /**
-     * <p>Called after Mixin configs have been loaded. Do Forge-specific initialization.</p>
-     * <p>Note: The mod bootstrapping Mixin must contain an FML plugin for this to get called.</p>
+     * <p>Called after Mixin configs have been loaded. Do Forge-specific
+     * initialization.</p>
+     *
+     * <p>Note: The mod bootstrapping Mixin must contain an FML plugin for this
+     * to get called.</p>
      */
     @Override
     public void initPrimaryContainer() {
