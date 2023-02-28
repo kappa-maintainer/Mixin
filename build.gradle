@@ -70,6 +70,11 @@ repositories {
         name = 'forge'
         url = 'https://files.minecraftforge.net/maven'
     }
+    maven {
+        //Bouncepad
+        name 'Cleanroom Maven'
+        url 'https://maven.cleanroommc.com/'
+    }
 }
 
 configurations {
@@ -78,6 +83,7 @@ configurations {
     exampleImplementation       .extendsFrom implementation
     fernflowerImplementation    .extendsFrom implementation
     launchwrapperImplementation .extendsFrom implementation
+    bouncepadImplementation     .extendsFrom implementation
     agentImplementation         .extendsFrom implementation
     modlauncherImplementation   .extendsFrom implementation
     modlauncher9Implementation  .extendsFrom modlauncherImplementation
@@ -86,7 +92,8 @@ configurations {
 
     proguard {
         extendsFrom fernflowerImplementation
-        extendsFrom launchwrapperImplementation
+        //extendsFrom launchwrapperImplementation
+        extendsFrom bouncepadImplementation
         extendsFrom modlauncherImplementation
         extendsFrom compileClasspath
     }
@@ -132,10 +139,14 @@ sourceSets {
     test {
         ext.modularityExcluded = true
     }
-    launchwrapper {
+    /*launchwrapper {
         compileClasspath += main.output
         ext.languageVersion = 8
         ext.compatibility = '1.8'
+    }*/
+    bouncepad {
+        compileClasspath += main.output
+        ext.languageVersion = 17
     }
     modlauncher {
         compileClasspath += main.output
@@ -199,7 +210,15 @@ dependencies {
         exclude module: 'asm-debug-all'
         exclude module: 'jopt-simple'
     }
-    
+
+    bouncepadImplementation ('org.apache.logging.log4j:log4j-core:2.11.2')
+    bouncepadImplementation ('org.ow2.asm:asm-tree:$asmVersion')
+    bouncepadImplementation ('com.cleanroommc:bouncepad:1.0') {
+        exclude module: 'lwjgl'
+        exclude module: 'asm-debug-all'
+        exclude module: 'jopt-simple'
+    }
+
     modlauncherImplementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
     modlauncherCompileOnly 'org.apache.logging.log4j:log4j-core:2.0-beta9'
     modlauncherImplementation ("cpw.mods:modlauncher:$legacyModlauncherVersion") {
@@ -281,7 +300,7 @@ eclipse {
     }
 
     // Build service task outputs for test projects
-    autoBuildTasks compileModlauncher4Java, compileModlauncher9Java, compileLaunchwrapperJava
+    autoBuildTasks compileModlauncher4Java, compileModlauncher9Java, compileBouncepadJava
 }
 
 // Filter, process, and include resources
