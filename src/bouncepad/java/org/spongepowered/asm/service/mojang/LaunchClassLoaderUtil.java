@@ -24,17 +24,17 @@
  */
 package org.spongepowered.asm.service.mojang;
 
+import net.minecraft.launchwrapper.LaunchClassLoader;
+import org.spongepowered.asm.service.IClassTracker;
+
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import com.cleanroommc.bouncepad.BouncepadClassLoader;
-import org.spongepowered.asm.service.IClassTracker;
-
 
 /**
- * Utility class for reflecting into {@link BouncepadClassLoader}. We <b>do not
+ * Utility class for reflecting into {@link LaunchClassLoader}. We <b>do not
  * write</b> anything of the classloader fields, but we need to be able to read
  * them to perform some validation tasks, and insert entries for mixin "classes"
  * into the invalid classes set.
@@ -49,7 +49,7 @@ final class LaunchClassLoaderUtil implements IClassTracker {
     /**
      * ClassLoader for this util
      */
-    private final BouncepadClassLoader classLoader;
+    private final LaunchClassLoader classLoader;
     
     // Reflected fields
     private final Map<String, Class<?>> cachedClasses;
@@ -62,7 +62,7 @@ final class LaunchClassLoaderUtil implements IClassTracker {
      * 
      * @param classLoader class loader
      */
-    LaunchClassLoaderUtil(BouncepadClassLoader classLoader) {
+    LaunchClassLoaderUtil(LaunchClassLoader classLoader) {
         this.classLoader = classLoader;
         this.cachedClasses = LaunchClassLoaderUtil.<Map<String, Class<?>>>getField(classLoader, LaunchClassLoaderUtil.CACHED_CLASSES_FIELD);
         this.invalidClasses = LaunchClassLoaderUtil.<Set<String>>getField(classLoader, LaunchClassLoaderUtil.INVALID_CLASSES_FIELD);
@@ -73,7 +73,7 @@ final class LaunchClassLoaderUtil implements IClassTracker {
     /**
      * Get the classloader
      */
-    BouncepadClassLoader getClassLoader() {
+    LaunchClassLoader getClassLoader() {
         return this.classLoader;
     }
     
@@ -190,9 +190,9 @@ final class LaunchClassLoaderUtil implements IClassTracker {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T getField(BouncepadClassLoader classLoader, String fieldName) {
+    private static <T> T getField(LaunchClassLoader classLoader, String fieldName) {
         try {
-            Field field = BouncepadClassLoader.class.getDeclaredField(fieldName);
+            Field field = LaunchClassLoader.class.getDeclaredField(fieldName);
             field.setAccessible(true);
             return (T)field.get(classLoader);
         } catch (Exception ex) {

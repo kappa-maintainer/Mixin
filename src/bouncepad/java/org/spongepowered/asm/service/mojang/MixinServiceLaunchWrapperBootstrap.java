@@ -46,7 +46,7 @@ public class MixinServiceLaunchWrapperBootstrap implements IMixinServiceBootstra
 
     @Override
     public String getName() {
-        return "LaunchWrapper";
+        return "BouncePad";
     }
 
     @Override

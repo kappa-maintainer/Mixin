@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,7 +52,6 @@ import org.spongepowered.asm.util.IConsumer;
 
 import net.minecraft.launchwrapper.ITweaker;
 import com.cleanroommc.bouncepad.Bouncepad;
-import com.cleanroommc.bouncepad.BouncepadClassLoader;
 
 /**
  * Platform agent for use under FML and LaunchWrapper.
@@ -235,7 +235,7 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
         
         MixinPlatformAgentAbstract.logger.debug("{} has core plugin {}. Injecting it into FML for co-initialisation:", this.fileName, coreModName);
         Method mdLoadCoreMod = this.clCoreModManager.getDeclaredMethod(GlobalProperties.getString(GlobalProperties.Keys.FML_LOAD_CORE_MOD,
-                MixinPlatformAgentFMLLegacy.LOAD_CORE_MOD_METHOD), BouncepadClassLoader.class, String.class, File.class);
+                MixinPlatformAgentFMLLegacy.LOAD_CORE_MOD_METHOD), LaunchClassLoader.class, String.class, File.class);
         mdLoadCoreMod.setAccessible(true);
         ITweaker wrapper = (ITweaker)mdLoadCoreMod.invoke(null, Bouncepad.classLoader, coreModName, this.file);
         if (wrapper == null) {
