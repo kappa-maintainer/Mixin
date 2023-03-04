@@ -212,10 +212,12 @@ class MixinApplicatorStandard {
      * receiving constructor. 
      */
     protected static final int[] INITIALISER_OPCODE_BLACKLIST = {
-        Opcodes.RETURN, Opcodes.ILOAD, Opcodes.LLOAD, Opcodes.FLOAD, Opcodes.DLOAD, Opcodes.IALOAD, Opcodes.LALOAD, Opcodes.FALOAD, Opcodes.DALOAD,
-        Opcodes.AALOAD, Opcodes.BALOAD, Opcodes.CALOAD, Opcodes.SALOAD, Opcodes.ISTORE, Opcodes.LSTORE, Opcodes.FSTORE, Opcodes.DSTORE,
-        Opcodes.ASTORE, Opcodes.IASTORE, Opcodes.LASTORE, Opcodes.FASTORE, Opcodes.DASTORE, Opcodes.AASTORE, Opcodes.BASTORE, Opcodes.CASTORE,
-        Opcodes.SASTORE
+        Opcodes.RETURN, Opcodes.ILOAD, Opcodes.LLOAD, Opcodes.FLOAD, Opcodes.DLOAD,
+        Opcodes.ISTORE, Opcodes.LSTORE, Opcodes.FSTORE, Opcodes.DSTORE, Opcodes.ASTORE,
+        // Fabric: Array opcodes cause no problems in initialisers and should not be needlessly restricted.
+        //        Opcodes.IALOAD, Opcodes.LALOAD, Opcodes.FALOAD, Opcodes.DALOAD, Opcodes.AALOAD,
+        //        Opcodes.BALOAD, Opcodes.CALOAD, Opcodes.SALOAD, Opcodes.IASTORE, Opcodes.LASTORE,
+        //        Opcodes.FASTORE, Opcodes.DASTORE, Opcodes.AASTORE, Opcodes.BASTORE, Opcodes.CASTORE, Opcodes.SASTORE
     };
 
     /**
@@ -954,6 +956,12 @@ class MixinApplicatorStandard {
      */
     protected final void injectInitialiser(MixinTargetContext mixin, MethodNode ctor, Deque<AbstractInsnNode> initialiser) {
         Map<LabelNode, LabelNode> labels = Bytecode.cloneLabels(ctor.instructions);
+        // Fabric: also clone labels from the initialiser as they will be merged.
+        for (AbstractInsnNode node : initialiser) {
+            if (node instanceof LabelNode) {
+                labels.put((LabelNode) node, new LabelNode());
+            }
+        }
         
         AbstractInsnNode insn = this.findInitialiserInjectionPoint(mixin, ctor, initialiser);
         if (insn == null) {
@@ -963,10 +971,12 @@ class MixinApplicatorStandard {
 
         for (AbstractInsnNode node : initialiser) {
             if (node instanceof LabelNode) {
-                continue;
+                // Fabric: Merge cloned labels instead of skipping them.
+                // continue;
             }
             if (node instanceof JumpInsnNode) {
-                throw new InvalidMixinException(mixin, "Unsupported JUMP opcode in initialiser in " + mixin);
+                // Fabric: Jumps cause no issues if labels are cloned properly and should not be needlessly restricted.
+                // throw new InvalidMixinException(mixin, "Unsupported JUMP opcode in initialiser in " + mixin);
             }
             AbstractInsnNode imACloneNow = node.clone(labels);
             ctor.instructions.insert(insn, imACloneNow);
