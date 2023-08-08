@@ -1248,7 +1248,12 @@ public final class ClassInfo {
         }
 
         for (String iface : this.interfaces) {
-            ClassInfo.forName(iface).addMethodsRecursive(methods, includeMixins);
+            ClassInfo classInfo = ClassInfo.forName(iface);
+            if (classInfo == null) {
+                ClassInfo.logger.debug("Failed to resolve implementing interface {} on {}", iface, this.name);
+                continue;
+            }
+            classInfo.addMethodsRecursive(methods, includeMixins);
         }
 
         return this.getSuperClass();
