@@ -36,11 +36,8 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.MixinEnvironment.Option;
 import org.spongepowered.asm.mixin.MixinEnvironment.Phase;
 import org.spongepowered.asm.mixin.Mixins;
-import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
-import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
-import org.spongepowered.asm.mixin.extensibility.IMixinErrorHandler;
+import org.spongepowered.asm.mixin.extensibility.*;
 import org.spongepowered.asm.mixin.extensibility.IMixinErrorHandler.ErrorAction;
-import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.mixin.injection.InjectionPoint;
 import org.spongepowered.asm.mixin.injection.selectors.ITargetSelectorDynamic;
 import org.spongepowered.asm.mixin.throwables.ClassAlreadyLoadedException;
@@ -70,7 +67,7 @@ import org.spongepowered.asm.util.perf.Profiler.Section;
 /**
  * Heart of the Mixin pipeline 
  */
-class MixinProcessor {
+class MixinProcessor implements IMixinProcessor {
 
     /**
      * Phase during which an error occurred, delegates to functionality in
@@ -232,6 +229,21 @@ class MixinProcessor {
         
         this.profiler = Profiler.getProfiler("mixin");
         this.auditTrail = this.service.getAuditTrail();
+    }
+
+    @Override
+    public IMixinService getMixinService() {
+        return service;
+    }
+
+    @Override
+    public List<IMixinConfig> getMixinConfigs() {
+        return Collections.<IMixinConfig>unmodifiableList(configs);
+    }
+
+    @Override
+    public List<IMixinConfig> getPendingMixinConfigs() {
+        return Collections.<IMixinConfig>unmodifiableList(pendingConfigs);
     }
 
     /**

@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.MixinEnvironment;
+import org.spongepowered.asm.mixin.extensibility.IMixinProcessor;
 import org.spongepowered.asm.mixin.transformer.ext.IExtensionRegistry;
 import org.spongepowered.asm.service.ILegacyClassTransformer;
 
@@ -123,5 +124,10 @@ public interface IMixinTransformer {
      * Get the transformer extensions
      */
     public abstract IExtensionRegistry getExtensions();
+
+    /**
+     * Get the processor that provided this transformer
+     */
+    public abstract IMixinProcessor getProcessor();
 
 }
