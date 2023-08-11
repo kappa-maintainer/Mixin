@@ -42,15 +42,17 @@ public final class GlobalProperties {
      */
     public static final class Keys {
 
-        public static final Keys INIT                         = Keys.of("mixin.initialised");
-        public static final Keys AGENTS                       = Keys.of("mixin.agents");
-        public static final Keys CONFIGS                      = Keys.of("mixin.configs");
-        public static final Keys PLATFORM_MANAGER             = Keys.of("mixin.platform");
+        public static final Keys INIT                           = Keys.of("mixin.initialised");
+        public static final Keys AGENTS                         = Keys.of("mixin.agents");
+        public static final Keys CONFIGS                        = Keys.of("mixin.configs");
+        public static final Keys PLATFORM_MANAGER               = Keys.of("mixin.platform");
         
-        public static final Keys FML_LOAD_CORE_MOD            = Keys.of("mixin.launch.fml.loadcoremodmethod");
-        public static final Keys FML_GET_REPARSEABLE_COREMODS = Keys.of("mixin.launch.fml.reparseablecoremodsmethod");
-        public static final Keys FML_CORE_MOD_MANAGER         = Keys.of("mixin.launch.fml.coremodmanagerclass");
-        public static final Keys FML_GET_IGNORED_MODS         = Keys.of("mixin.launch.fml.ignoredmodsmethod");
+        public static final Keys FML_LOAD_CORE_MOD              = Keys.of("mixin.launch.fml.loadcoremodmethod");
+        public static final Keys FML_GET_REPARSEABLE_COREMODS   = Keys.of("mixin.launch.fml.reparseablecoremodsmethod");
+        public static final Keys FML_CORE_MOD_MANAGER           = Keys.of("mixin.launch.fml.coremodmanagerclass");
+        public static final Keys FML_GET_IGNORED_MODS           = Keys.of("mixin.launch.fml.ignoredmodsmethod");
+
+        public static final Keys CLEANROOM_DISABLE_MIXIN_CONFIGS = Keys.of("mixin.cleanroom.disablemixinconfigs");
         
         private static Map<String, Keys> keys;
         

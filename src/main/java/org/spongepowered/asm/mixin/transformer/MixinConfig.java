@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.logging.Level;
 import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.launch.MixinInitialisationError;
@@ -1283,6 +1284,10 @@ final class MixinConfig implements Comparable<MixinConfig>, IMixinConfig {
      * @return new Config
      */
     static Config create(String configFile, MixinEnvironment outer) {
+        Set<String> disabledMixinConfigs = GlobalProperties.get(GlobalProperties.Keys.CLEANROOM_DISABLE_MIXIN_CONFIGS, Collections.<String>emptySet());
+        if (disabledMixinConfigs.contains(configFile)) {
+            return null;
+        }
         try {
             IMixinService service = MixinService.getService();
             InputStream resource = service.getResourceAsStream(configFile);
