@@ -53,6 +53,7 @@ public final class GlobalProperties {
         public static final Keys FML_GET_IGNORED_MODS           = Keys.of("mixin.launch.fml.ignoredmodsmethod");
 
         public static final Keys CLEANROOM_DISABLE_MIXIN_CONFIGS = Keys.of("mixin.cleanroom.disablemixinconfigs");
+        public static final Keys CLEANROOM_GLOBAL_MIXIN_CONTEXT_QUERY = Keys.of("mixin.cleanroom.globalmixincontextquery");
         
         private static Map<String, Keys> keys;
         
