@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.spongepowered.asm.launch.platform.GlobalMixinContextQuery;
 import org.spongepowered.asm.logging.Level;
 import org.spongepowered.asm.logging.ILogger;
 import org.objectweb.asm.ClassReader;
@@ -1384,7 +1385,7 @@ class MixinInfo implements Comparable<MixinInfo>, IMixinInfo {
      */
     @Override
     public String toString() {
-        return String.format("%s:%s from mod %s", this.parent.getName(), this.name, org.spongepowered.asm.mixin.FabricUtil.getModId(getConfig()));
+        return String.format("%s:%s from mod %s", this.parent.getName(), this.name, GlobalMixinContextQuery.owner(getConfig()));
     }
     
     static Variant getVariant(ClassNode classNode) {

@@ -331,12 +331,8 @@ public final class Locals {
      * @return A sparse array containing a view (hopefully) of the locals at the
      *      specified location
      */
-    public static LocalVariableNode[] getLocalsAt(ClassNode classNode, MethodNode method, AbstractInsnNode node, int fabricCompatibility) {
-        if (fabricCompatibility >= org.spongepowered.asm.mixin.FabricUtil.COMPATIBILITY_0_10_0) {
-            return Locals.getLocalsAt(classNode, method, node, Settings.DEFAULT);
-        } else {
-            return getLocalsAt_0_9_2(classNode, method, node);
-        }
+    public static LocalVariableNode[] getLocalsAt(ClassNode classNode, MethodNode method, AbstractInsnNode node) {
+        return Locals.getLocalsAt(classNode, method, node, Settings.DEFAULT);
     }
     
     /**

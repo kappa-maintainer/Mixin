@@ -23,6 +23,26 @@ public final class GlobalMixinContextQuery {
             init = true;
         }
     }
+
+    public static String location(IMixinConfig config) {
+        return location(config, UNKNOWN_LOCATION);
+    }
+
+    public static String location(IMixinConfig config, String defaultValue) {
+        init();
+        return GlobalProperties.<GlobalMixinContextQuery>get(GlobalProperties.Keys.CLEANROOM_GLOBAL_MIXIN_CONTEXT_QUERY)
+                .getLocation(config, defaultValue);
+    }
+
+    public static String owner(IMixinConfig config) {
+        return location(config, UNKNOWN_OWNER);
+    }
+
+    public static String owner(IMixinConfig config, String defaultValue) {
+        init();
+        return GlobalProperties.<GlobalMixinContextQuery>get(GlobalProperties.Keys.CLEANROOM_GLOBAL_MIXIN_CONTEXT_QUERY)
+                .getOwner(config, defaultValue);
+    }
     
     private final List<MixinContextQuery> queries = new ArrayList<MixinContextQuery>();
     
