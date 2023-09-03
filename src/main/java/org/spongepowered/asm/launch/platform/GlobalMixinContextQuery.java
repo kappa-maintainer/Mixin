@@ -26,6 +26,7 @@ package org.spongepowered.asm.launch.platform;
 
 import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
+import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.mixin.extensibility.MixinContextQuery;
 
 import java.util.ArrayList;
@@ -48,6 +49,14 @@ public final class GlobalMixinContextQuery {
         }
     }
 
+    public static String location(IMixinInfo info) {
+        return location(info.getConfig(), UNKNOWN_LOCATION);
+    }
+
+    public static String location(IMixinInfo info, String defaultValue) {
+        return location(info.getConfig(), defaultValue);
+    }
+
     public static String location(IMixinConfig config) {
         return location(config, UNKNOWN_LOCATION);
     }
@@ -56,6 +65,14 @@ public final class GlobalMixinContextQuery {
         init();
         return GlobalProperties.<GlobalMixinContextQuery>get(GlobalProperties.Keys.CLEANROOM_GLOBAL_MIXIN_CONTEXT_QUERY)
                 .getLocation(config, defaultValue);
+    }
+
+    public static String owner(IMixinInfo info) {
+        return location(info.getConfig(), UNKNOWN_OWNER);
+    }
+
+    public static String owner(IMixinInfo info, String defaultValue) {
+        return location(info.getConfig(), defaultValue);
     }
 
     public static String owner(IMixinConfig config) {
