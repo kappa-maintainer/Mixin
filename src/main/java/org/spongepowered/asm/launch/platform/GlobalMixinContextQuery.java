@@ -40,7 +40,7 @@ public final class GlobalMixinContextQuery {
     public static final String UNKNOWN_OWNER = "unknown-owner";
     
     private static boolean init = false;
-    private static final Object EMPTY_VALUE = new Object();
+    private static final String EMPTY_VALUE = "";
     
     public static void init() {
         if (!init) {
@@ -111,7 +111,7 @@ public final class GlobalMixinContextQuery {
     public String getLocation(IMixinConfig config, String defaultValue) {
         String value = config.getDecoration(MIXIN_LOCATION_DECORATOR);
         if (value != null) {
-            return value == EMPTY_VALUE ? defaultValue : value;
+            return EMPTY_VALUE.equals(value) ? defaultValue : value;
         }
         List<MixinContextQuery> queries = this.queries;
         for (int i = 0; i < queries.size(); i++) {
@@ -142,7 +142,7 @@ public final class GlobalMixinContextQuery {
     public String getOwner(IMixinConfig config, String defaultValue) {
         String value = config.getDecoration(MIXIN_OWNER_DECORATOR);
         if (value != null) {
-            return value == EMPTY_VALUE ? defaultValue : value;
+            return EMPTY_VALUE.equals(value) ? defaultValue : value;
         }
         List<MixinContextQuery> queries = this.queries;
         for (int i = 0; i < queries.size(); i++) {
