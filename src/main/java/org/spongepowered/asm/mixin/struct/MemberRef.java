@@ -27,7 +27,6 @@ package org.spongepowered.asm.mixin.struct;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
-import org.spongepowered.asm.mixin.transformer.ClassInfo;
 import org.spongepowered.asm.mixin.transformer.throwables.MixinTransformerError;
 import org.spongepowered.asm.util.Bytecode;
 import org.spongepowered.asm.util.Handles;
@@ -222,14 +221,14 @@ public abstract class MemberRef {
             }
             return opcode;
         }
-        
+
         @Override
         public void setOpcode(int opcode) {
             int tag = Handles.tagFromOpcode(opcode);
             if (tag == 0) {
                 throw new MixinTransformerError("Invalid opcode " + Bytecode.getOpcodeName(opcode) + " for method handle " + this.handle + ".");
             }
-            this.setHandle(tag, this.handle.getOwner(), this.handle.getName(), this.handle.getDesc(), this.handle.isInterface());
+            this.setHandle(tag, this.handle.getOwner(), this.handle.getName(), this.handle.getDesc());
         }
 
         @Override
@@ -239,7 +238,7 @@ public abstract class MemberRef {
 
         @Override
         public void setOwner(String owner) {
-            this.setHandle(this.handle.getTag(), owner, this.handle.getName(), this.handle.getDesc(), this.handle.isInterface());
+            this.setHandle(this.handle.getTag(), owner, this.handle.getName(), this.handle.getDesc());
         }
 
         @Override
@@ -249,7 +248,7 @@ public abstract class MemberRef {
 
         @Override
         public void setName(String name) {
-            this.setHandle(this.handle.getTag(), this.handle.getOwner(), name, this.handle.getDesc(), this.handle.isInterface());
+            this.setHandle(this.handle.getTag(), this.handle.getOwner(), name, this.handle.getDesc());
         }
 
         @Override
@@ -259,11 +258,15 @@ public abstract class MemberRef {
 
         @Override
         public void setDesc(String desc) {
-            this.setHandle(this.handle.getTag(), this.handle.getOwner(), this.handle.getName(), desc, this.handle.isInterface());
+            this.setHandle(this.handle.getTag(), this.handle.getOwner(), this.handle.getName(), desc);
         }
 
         public void setHandle(int tag, String owner, String name, String desc, boolean isInterface) {
             this.handle = new org.objectweb.asm.Handle(tag, owner, name, desc, isInterface);
+        }
+
+        public void setHandle(int tag, String owner, String name, String desc) {
+            setHandle(tag, owner, name, desc, tag == Opcodes.H_INVOKEINTERFACE);
         }
 
     }
