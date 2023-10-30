@@ -68,7 +68,7 @@ import org.spongepowered.asm.util.perf.Profiler.Section;
 /**
  * Heart of the Mixin pipeline 
  */
-class MixinProcessor implements IMixinProcessor {
+public class MixinProcessor implements IMixinProcessor {
 
     /**
      * Phase during which an error occurred, delegates to functionality in
@@ -595,6 +595,17 @@ class MixinProcessor implements IMixinProcessor {
         this.pendingConfigs.clear();
         
         return totalMixins;
+    }
+    
+    /**
+     * @deprecated Compatibility with common brittle Reflection-based usages pre-0.8.
+     * @param environment Environment
+     * @return Total number of Mixins initialized
+     */
+    @Deprecated
+    private int prepareConfigs(MixinEnvironment environment) {
+        MixinProcessor.logger.warn("MixinTransformer::prepareConfigs(MixinEnvironment) is deprecated!");
+        return prepareConfigs(environment, this.extensions);
     }
 
     private void handleMixinPrepareError(MixinConfig config, InvalidMixinException ex, MixinEnvironment environment) throws MixinPrepareError {
