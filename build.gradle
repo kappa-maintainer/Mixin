@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:0.16.1'
-        classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
+        classpath 'com.github.johnrengelman:shadow:8.1.1'
         classpath 'com.guardsquare:proguard-gradle:' + (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11) ? '7.2.0' : '7.1.0')
     }
 }
@@ -72,8 +72,13 @@ repositories {
     }
     maven {
         //Bouncepad
-        name 'Cleanroom Maven'
-        url 'https://maven.cleanroommc.com/'
+        name = 'Cleanroom Maven'
+        url = 'https://maven.cleanroommc.com/'
+    }
+    maven {
+        //Bouncepad
+        name = 'Outlands Maven'
+        url = 'https://maven.outlands.top/releases'
     }
 }
 
@@ -147,6 +152,7 @@ sourceSets {
     bouncepad {
         compileClasspath += main.output
         ext.languageVersion = 17
+        ext.compatibility = '17'
     }
     modlauncher {
         compileClasspath += main.output
@@ -160,12 +166,12 @@ sourceSets {
         ext.compatibility = '1.8'
     }
     modlauncher9 {
-        ext.languageVersion = 16
+        ext.languageVersion = 17
         compileClasspath += main.output
         compileClasspath += modlauncher.output
     }
     modularity {
-        ext.languageVersion = 16
+        ext.languageVersion = 17
         ext.modularityExcluded = true // don't add ourselves
     }
 }
@@ -213,7 +219,7 @@ dependencies {
 
     bouncepadImplementation ('org.apache.logging.log4j:log4j-core:2.11.2')
     bouncepadImplementation ('org.ow2.asm:asm-tree:$asmVersion')
-    bouncepadImplementation ('com.cleanroommc:bouncepad:1.0') {
+    bouncepadImplementation ('com.cleanroommc:bouncepad:0.4.3-cursed') {
         exclude module: 'lwjgl'
         exclude module: 'asm-debug-all'
         exclude module: 'jopt-simple'

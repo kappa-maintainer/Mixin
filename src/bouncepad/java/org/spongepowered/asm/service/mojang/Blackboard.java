@@ -25,6 +25,7 @@
 package org.spongepowered.asm.service.mojang;
 
 import com.cleanroommc.bouncepad.Bouncepad;
+import com.cleanroommc.bouncepad.InternalBlackboard;
 import org.spongepowered.asm.service.IGlobalPropertyService;
 import org.spongepowered.asm.service.IPropertyKey;
 
@@ -52,6 +53,8 @@ public class Blackboard implements IGlobalPropertyService {
         }
     }
 
+
+
     public Blackboard() {
         Bouncepad.classLoader.hashCode();
     }
@@ -71,7 +74,7 @@ public class Blackboard implements IGlobalPropertyService {
     @Override
     @SuppressWarnings("unchecked")
     public final <T> T getProperty(IPropertyKey key) {
-        return (T)Bouncepad.BLACKBOARD.get(key.toString());
+        return (T)InternalBlackboard.INSTANCE.get(key.toString());
     }
 
     /**
@@ -82,7 +85,7 @@ public class Blackboard implements IGlobalPropertyService {
      */
     @Override
     public final void setProperty(IPropertyKey key, Object value) {
-        Bouncepad.BLACKBOARD.put(key.toString(), value);
+        InternalBlackboard.INSTANCE.put(key.toString(), value);
     }
     
     /**
@@ -97,7 +100,7 @@ public class Blackboard implements IGlobalPropertyService {
     @Override
     @SuppressWarnings("unchecked")
     public final <T> T getProperty(IPropertyKey key, T defaultValue) {
-        Object value = Bouncepad.BLACKBOARD.get(key.toString());
+        Object value = InternalBlackboard.INSTANCE.get(key.toString());
         return value != null ? (T)value : defaultValue;
     }
     
@@ -112,7 +115,7 @@ public class Blackboard implements IGlobalPropertyService {
      */
     @Override
     public final String getPropertyString(IPropertyKey key, String defaultValue) {
-        Object value = Bouncepad.BLACKBOARD.get(key.toString());
+        Object value = InternalBlackboard.INSTANCE.get(key.toString());
         return value != null ? value.toString() : defaultValue;
     }
 
