@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath 'gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:0.16.1'
         classpath 'com.github.johnrengelman:shadow:8.1.1'
-        classpath 'com.guardsquare:proguard-gradle:' + (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11) ? '7.2.0' : '7.1.0')
+        classpath 'com.guardsquare:proguard-gradle:' + (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11) ? '7.4.0' : '7.1.0')
     }
 }
 
@@ -27,7 +27,7 @@ apply plugin: 'potemkin-modules'
 defaultTasks 'licenseFormat', 'check', 'build'
 
 // Basic project information
-group = 'net.fabricmc'
+group = 'com.cleanroommc'
 archivesBaseName = 'sponge-mixin'
 version = buildVersion + "+mixin." + upstreamMixinVersion
 
@@ -159,21 +159,8 @@ sourceSets {
         ext.languageVersion = 8
         ext.compatibility = '1.8'
     }
-    modlauncher4 {
-        compileClasspath += main.output
-        compileClasspath += modlauncher.output
-        ext.languageVersion = 8
-        ext.compatibility = '1.8'
-    }
-    modlauncher9 {
-        ext.languageVersion = 17
-        compileClasspath += main.output
-        compileClasspath += modlauncher.output
-    }
-    modularity {
-        ext.languageVersion = 17
-        ext.modularityExcluded = true // don't add ourselves
-    }
+
+
 }
 
 // Because Mixin aims to support a variety of environments, we have to be able to run with older versions of GSON and Guava that lack official module
@@ -235,26 +222,14 @@ dependencies {
         exclude module: 'jopt-simple'
     }
     
-    modlauncher4Implementation ("cpw.mods:modlauncher:$legacyModlauncherVersion") {
-        exclude module: 'asm'
-        exclude module: 'asm-analysis'
-        exclude module: 'asm-commons'
-        exclude module: 'asm-tree'
-        exclude module: 'jopt-simple'
-    }
-    
-    modlauncher9Implementation ("cpw.mods:modlauncher:$modlauncherVersion") {
-        exclude module: 'jopt-simple'
-    }
-    modlauncher9Implementation 'cpw.mods:securejarhandler:0.9.+'
+
     
     // asm bridge
     bridgeImplementation 'org.apache.logging.log4j:log4j-core:2.0-beta9'
     bridgeImplementation "org.ow2.asm:asm-commons:$legacyForgeAsmVersion"
     
     legacyImplementation "org.ow2.asm:asm-tree:$asmVersion"
-    
-    modularityCompileOnly 'org.apache.logging.log4j:log4j-core:2.11.2'
+
 }
 
 javadoc {
@@ -306,7 +281,7 @@ eclipse {
     }
 
     // Build service task outputs for test projects
-    autoBuildTasks compileModlauncher4Java, compileModlauncher9Java, compileBouncepadJava
+    autoBuildTasks compileBouncepadJava
 }
 
 // Filter, process, and include resources
@@ -362,24 +337,9 @@ project.sourceSets.each { set -> {
         project.tasks[set.compileJavaTaskName].sourceCompatibility = set.ext.compatibility
         project.tasks[set.compileJavaTaskName].targetCompatibility = set.ext.compatibility
     }
-    def modularityExcluded = set.ext.has("modularityExcluded") && set.ext.modularityExcluded
-    if (!modularityExcluded) {
-        project.sourceSets.modularity {
-            compileClasspath += set.output
-        }
-        modularityInputs.from set.output
-    }
+
 }}
 
-compileModularityJava {
-    inputs.files(modularityInputs)
-    doFirst {
-        options.compilerArgs = [
-            '--module-path', classpath.asPath,
-            '--patch-module', "org.spongepowered.mixin=${modularityInputs.collect { it.absolutePath }.join(File.pathSeparator)}"
-        ]
-    }
-}
 
 if (JavaVersion.current().isJava8Compatible()) {
     tasks.withType(Javadoc) {
