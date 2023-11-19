@@ -174,7 +174,7 @@ class MixinProcessor {
     /**
      * Processor extensions
      */
-    private final Extensions extensions;
+    public final Extensions extensions;
     
     /**
      * Hot-Swap agent
@@ -487,7 +487,7 @@ class MixinProcessor {
      * 
      * @param environment Environment to query
      */
-    private void selectConfigs(MixinEnvironment environment) {
+    public void selectConfigs(MixinEnvironment environment) {
         for (Iterator<Config> iter = Mixins.getConfigs().iterator(); iter.hasNext();) {
             Config handle = iter.next();
             try {
@@ -512,7 +512,7 @@ class MixinProcessor {
      * @param environment Environment
      * @return total number of mixins initialised
      */
-    private int prepareConfigs(MixinEnvironment environment, Extensions extensions) {
+    public int prepareConfigs(MixinEnvironment environment, Extensions extensions) {
         int totalMixins = 0;
         
         final IHotSwap hotSwapper = this.hotSwapper;

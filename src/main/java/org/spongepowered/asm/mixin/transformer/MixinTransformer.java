@@ -86,7 +86,7 @@ final class MixinTransformer extends TreeTransformer implements IMixinTransforme
     /**
      * Mixin processor which actually manages application of mixins
      */
-    private final MixinProcessor processor;
+    public final MixinProcessor processor;
     
     /**
      * Class generator 
