@@ -91,6 +91,11 @@ public final class GlobalProperties {
             }
             return key;
         }
+
+        @Override
+        public String toString() {
+            return name;
+        }
         
     }
     
