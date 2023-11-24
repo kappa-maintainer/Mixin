@@ -64,6 +64,7 @@ public enum MixinInheritanceTracker implements IListener {
 		return findOverrides(owner.getName(), name, desc);
 	}
 
+	@SuppressWarnings("fallthrough")
 	public List<MethodNode> findOverrides(String owner, String name, String desc) {
 		List<MixinInfo> children = parentMixins.get(owner);
 		if (children == null) return Collections.emptyList();

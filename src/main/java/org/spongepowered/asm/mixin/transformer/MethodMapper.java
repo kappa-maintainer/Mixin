@@ -29,10 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.spongepowered.asm.launch.platform.GlobalMixinContextQuery;
 import org.spongepowered.asm.logging.ILogger;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.spongepowered.asm.mixin.FabricUtil;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.injection.struct.InjectionInfo;
 import org.spongepowered.asm.mixin.transformer.ClassInfo.Method;
@@ -111,17 +111,17 @@ class MethodMapper {
     public String getHandlerName(MixinMethodNode method) {
         String prefix = InjectionInfo.getInjectorPrefix(method.getInjectorAnnotation());
         String classUID = MethodMapper.getClassUID(method.getOwner().getClassRef());
-        String mod = FabricUtil.getModId(method.getOwner().getConfig(), "");
+        String owner = GlobalMixinContextQuery.owner(method.getOwner().getConfig(), "");
         String methodName = method.name;
-        if (!mod.isEmpty()) {
+        if (!owner.isEmpty()) {
 	    	//It's common for mods to prefix their own handlers, let's account for that happening
-	    	if (methodName.startsWith(mod) && methodName.length() > mod.length() + 1 && Chars.contains(new char[] {'_', '$'}, methodName.charAt(mod.length()))) {
-	    		methodName = methodName.substring(mod.length() + 1);
+	    	if (methodName.startsWith(owner) && methodName.length() > owner.length() + 1 && Chars.contains(new char[] {'_', '$'}, methodName.charAt(owner.length()))) {
+	    		methodName = methodName.substring(owner.length() + 1);
 	    	}
-	    	mod += '$';
+            owner += '$';
         }
         String methodUID = MethodMapper.getMethodUID(methodName, method.desc, !method.isSurrogate());
-        return String.format("%s$%s%s$%s%s", prefix, classUID, methodUID, mod, methodName);
+        return String.format("%s$%s%s$%s%s", prefix, classUID, methodUID, owner, methodName);
     }
 
     /**
@@ -137,7 +137,7 @@ class MethodMapper {
         String uniqueIndex = Integer.toHexString(this.nextUniqueMethodIndex++);
         String methodName = method.name;
         if (method instanceof MethodNodeEx) {
-        	String mod = FabricUtil.getModId(((MethodNodeEx) method).getOwner().getConfig(), "");
+        	String mod = GlobalMixinContextQuery.owner(((MethodNodeEx) method).getOwner().getConfig(), "");
         	if (!mod.isEmpty()) {
 	        	//It's rarer for mods to prefix their @Unique methods, but let's account for it anyway
 	        	if (methodName.startsWith(mod) && methodName.length() > mod.length() + 1 && Chars.contains(new char[] {'_', '$'}, methodName.charAt(mod.length()))) {
