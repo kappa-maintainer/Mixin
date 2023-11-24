@@ -392,6 +392,10 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
         return this.delegatedTransformers;
     }
 
+    public void setDelegatedTransformers(List<ILegacyClassTransformer> dtf) {
+        this.delegatedTransformers = dtf;
+    }
+
     /**
      * Builds the transformer list to apply to loaded mixin bytecode. Since
      * generating this list requires inspecting each transformer by name (to
