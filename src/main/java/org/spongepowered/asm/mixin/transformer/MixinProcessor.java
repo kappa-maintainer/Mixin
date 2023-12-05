@@ -173,7 +173,7 @@ public class MixinProcessor implements IMixinProcessor {
     /**
      * Processor extensions
      */
-    public final Extensions extensions;
+    final Extensions extensions;
     
     /**
      * Hot-Swap agent
@@ -501,7 +501,7 @@ public class MixinProcessor implements IMixinProcessor {
      * 
      * @param environment Environment to query
      */
-    public void selectConfigs(MixinEnvironment environment) {
+    void selectConfigs(MixinEnvironment environment) {
         for (Iterator<Config> iter = Mixins.getConfigs().iterator(); iter.hasNext();) {
             Config handle = iter.next();
             try {
@@ -526,7 +526,7 @@ public class MixinProcessor implements IMixinProcessor {
      * @param environment Environment
      * @return total number of mixins initialised
      */
-    protected int prepareConfigs(MixinEnvironment environment, Extensions extensions) {
+    int prepareConfigs(MixinEnvironment environment, Extensions extensions) {
         int totalMixins = 0;
         
         final IHotSwap hotSwapper = this.hotSwapper;
@@ -598,13 +598,13 @@ public class MixinProcessor implements IMixinProcessor {
     }
     
     /**
-     * @deprecated Added for compatibility with unfortunately-common brittle Reflection-based usages pre-0.8.
+     * @deprecated Added for compatibility with unfortunately-common brittle Reflection-based usages pre-0.8.5.
      * @see MixinProcessor#prepareConfigs(org.spongepowered.asm.mixin.MixinEnvironment, org.spongepowered.asm.mixin.transformer.ext.Extensions)
      * @param environment Environment
      * @return Total number of Mixins initialized
      */
     @Deprecated
-    private int prepareConfigs(MixinEnvironment environment) {
+    int prepareConfigs(MixinEnvironment environment) {
         MixinProcessor.logger.warn("MixinProcessor::prepareConfigs(MixinEnvironment) is deprecated!");
         return prepareConfigs(environment, this.extensions);
     }

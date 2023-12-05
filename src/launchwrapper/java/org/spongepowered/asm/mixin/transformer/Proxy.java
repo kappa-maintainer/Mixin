@@ -97,7 +97,8 @@ public final class Proxy implements IClassTransformer, ILegacyClassTransformer {
     }
     
     /**
-     * Tells the Mixin subsystem to process any Mixin configs that were added since we last checked. Mixins applied this way still cannot transform classes that are already loaded.
+     * Tells the Mixin subsystem to process any Mixin configs that were added since we last checked.
+     * Mixins applied this way cannot transform classes that are already loaded.
      * <p>A common use-case is to apply configs targeting classes that do not exist in the classloader before Mixin first initializes.</p>
      */
     public static void processLateConfigs() {
@@ -111,7 +112,6 @@ public final class Proxy implements IClassTransformer, ILegacyClassTransformer {
             logger.error("Proxy.transformer.processor is not a MixinProcessor. Could not apply late configs.");
             return;
         }
-        // NOTE: If anyone has a better way of doing this, please change this to use it. I'm just making a jankless version of the reflection-based method we've been using for years.
         final MixinProcessor mixinProcessor = (MixinProcessor) processor;
         mixinProcessor.selectConfigs(MixinEnvironment.getCurrentEnvironment());
         mixinProcessor.prepareConfigs(MixinEnvironment.getCurrentEnvironment(), mixinProcessor.extensions);
