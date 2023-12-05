@@ -85,7 +85,7 @@ import com.google.common.collect.Lists;
 /**
  * Runtime information bundle about a mixin
  */
-class MixinInfo implements Comparable<MixinInfo>, IMixinInfo {
+public class MixinInfo implements Comparable<MixinInfo>, IMixinInfo {
     
     /**
      * Class variant, used to determine subtype

@@ -47,8 +47,8 @@ ext.asmVersion = project.hasProperty("asmVersion") ? asmVersion : '9.0'
 ext.legacyForgeAsmVersion = project.hasProperty("legacyForgeAsmVersion") ? asmVersion : '5.0.3'
 
 // Minimum version of Java required
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
 
 java {
     modularity.inferModulePath = false
@@ -90,16 +90,10 @@ configurations {
     launchwrapperImplementation .extendsFrom implementation
     bouncepadImplementation     .extendsFrom implementation
     agentImplementation         .extendsFrom implementation
-    modlauncherImplementation   .extendsFrom implementation
-    modlauncher9Implementation  .extendsFrom modlauncherImplementation
-    modularityImplementation    .extendsFrom modlauncher9Implementation
-    modularityCompileOnly       .extendsFrom compileOnly
 
     proguard {
         extendsFrom fernflowerImplementation
-        //extendsFrom launchwrapperImplementation
         extendsFrom bouncepadImplementation
-        extendsFrom modlauncherImplementation
         extendsFrom compileClasspath
     }
 }
@@ -154,12 +148,6 @@ sourceSets {
         ext.languageVersion = 17
         ext.compatibility = '17'
     }
-    modlauncher {
-        compileClasspath += main.output
-        ext.languageVersion = 8
-        ext.compatibility = '1.8'
-    }
-
 
 }
 
@@ -206,24 +194,13 @@ dependencies {
 
     bouncepadImplementation ('org.apache.logging.log4j:log4j-core:2.11.2')
     bouncepadImplementation ('org.ow2.asm:asm-tree:$asmVersion')
-    bouncepadImplementation ('com.cleanroommc:bouncepad:0.4.3-cursed') {
+    bouncepadImplementation ('com.cleanroommc:bouncepad:0.4.10-cursed') {
         exclude module: 'lwjgl'
         exclude module: 'asm-debug-all'
         exclude module: 'jopt-simple'
     }
 
-    modlauncherImplementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
-    modlauncherCompileOnly 'org.apache.logging.log4j:log4j-core:2.0-beta9'
-    modlauncherImplementation ("cpw.mods:modlauncher:$legacyModlauncherVersion") {
-        exclude module: 'asm'
-        exclude module: 'asm-analysis'
-        exclude module: 'asm-commons'
-        exclude module: 'asm-tree'
-        exclude module: 'jopt-simple'
-    }
-    
 
-    
     // asm bridge
     bridgeImplementation 'org.apache.logging.log4j:log4j-core:2.0-beta9'
     bridgeImplementation "org.ow2.asm:asm-commons:$legacyForgeAsmVersion"
@@ -258,8 +235,6 @@ eclipse {
         containers 'org.eclipse.buildship.core.gradleclasspathcontainer'
         file.whenMerged {
             // Can't include old modlauncher because it causes issues with modules
-            entries.removeAll { it.kind == 'lib' && it.path =~ ~/modlauncher-$legacyModlauncherVersion/ }
-            entries.removeAll { it.kind == 'src' && it.path =~ ~/modlauncher4/ }
             entries.removeAll { it.kind == 'lib' && it.path =~ ~/log4j.*beta9/ }
             
             // Mark everything else as a module
