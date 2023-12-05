@@ -68,7 +68,7 @@ import org.spongepowered.asm.util.perf.Profiler.Section;
 /**
  * Heart of the Mixin pipeline 
  */
-class MixinProcessor implements IMixinProcessor {
+public class MixinProcessor implements IMixinProcessor {
 
     /**
      * Phase during which an error occurred, delegates to functionality in
@@ -173,7 +173,7 @@ class MixinProcessor implements IMixinProcessor {
     /**
      * Processor extensions
      */
-    private final Extensions extensions;
+    public final Extensions extensions;
     
     /**
      * Hot-Swap agent
@@ -501,7 +501,7 @@ class MixinProcessor implements IMixinProcessor {
      * 
      * @param environment Environment to query
      */
-    private void selectConfigs(MixinEnvironment environment) {
+    public void selectConfigs(MixinEnvironment environment) {
         for (Iterator<Config> iter = Mixins.getConfigs().iterator(); iter.hasNext();) {
             Config handle = iter.next();
             try {
@@ -521,12 +521,12 @@ class MixinProcessor implements IMixinProcessor {
     }
 
     /**
-     * Prepare mixin configs
+     * Prepares pending mixin configs
      * 
      * @param environment Environment
      * @return total number of mixins initialised
      */
-    private int prepareConfigs(MixinEnvironment environment, Extensions extensions) {
+    protected int prepareConfigs(MixinEnvironment environment, Extensions extensions) {
         int totalMixins = 0;
         
         final IHotSwap hotSwapper = this.hotSwapper;
@@ -595,6 +595,18 @@ class MixinProcessor implements IMixinProcessor {
         this.pendingConfigs.clear();
         
         return totalMixins;
+    }
+    
+    /**
+     * @deprecated Added for compatibility with unfortunately-common brittle Reflection-based usages pre-0.8.
+     * @see MixinProcessor#prepareConfigs(org.spongepowered.asm.mixin.MixinEnvironment, org.spongepowered.asm.mixin.transformer.ext.Extensions)
+     * @param environment Environment
+     * @return Total number of Mixins initialized
+     */
+    @Deprecated
+    private int prepareConfigs(MixinEnvironment environment) {
+        MixinProcessor.logger.warn("MixinProcessor::prepareConfigs(MixinEnvironment) is deprecated!");
+        return prepareConfigs(environment, this.extensions);
     }
 
     private void handleMixinPrepareError(MixinConfig config, InvalidMixinException ex, MixinEnvironment environment) throws MixinPrepareError {

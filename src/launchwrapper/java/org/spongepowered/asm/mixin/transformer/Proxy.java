@@ -24,13 +24,15 @@
  */
 package org.spongepowered.asm.mixin.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.minecraft.launchwrapper.IClassTransformer;
+import org.spongepowered.asm.logging.ILogger;
+import org.spongepowered.asm.mixin.MixinEnvironment;
+import org.spongepowered.asm.mixin.extensibility.IMixinProcessor;
 import org.spongepowered.asm.service.ILegacyClassTransformer;
 import org.spongepowered.asm.service.MixinService;
 
-import net.minecraft.launchwrapper.IClassTransformer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Proxy transformer for the mixin transformer. These transformers are used
@@ -93,5 +95,25 @@ public final class Proxy implements IClassTransformer, ILegacyClassTransformer {
         
         return basicClass;
     }
-
+    
+    /**
+     * Tells the Mixin subsystem to process any Mixin configs that were added since we last checked. Mixins applied this way still cannot transform classes that are already loaded.
+     * <p>A common use-case is to apply configs targeting classes that do not exist in the classloader before Mixin first initializes.</p>
+     */
+    public static void processLateConfigs() {
+        final IMixinProcessor processor = transformer.getProcessor();
+        final ILogger logger = MixinService.getService().getLogger("mixin");
+        if (processor.getPendingMixinConfigs().isEmpty()) {
+            logger.warn("Proxy::processLateConfigs was called with no pending configs.");
+            return;
+        }
+        if (!(processor instanceof MixinProcessor)) {
+            logger.error("Proxy.transformer.processor is not a MixinProcessor. Could not apply late configs.");
+            return;
+        }
+        // NOTE: If anyone has a better way of doing this, please change this to use it. I'm just making a jankless version of the reflection-based method we've been using for years.
+        final MixinProcessor mixinProcessor = (MixinProcessor) processor;
+        mixinProcessor.selectConfigs(MixinEnvironment.getCurrentEnvironment());
+        mixinProcessor.prepareConfigs(MixinEnvironment.getCurrentEnvironment(), mixinProcessor.extensions);
+    }
 }
