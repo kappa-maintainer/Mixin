@@ -966,6 +966,10 @@ public final class ClassInfo {
     public Set<IMixinInfo> getAppliedMixins() {
         return this.appliedMixins != null ? Collections.<IMixinInfo>unmodifiableSet(this.appliedMixins) : Collections.<IMixinInfo>emptySet();
     }
+
+    public Set<IMixinInfo> getApplicableMixins() {
+        return this.mixins.isEmpty() ? Collections.<IMixinInfo>emptySet() : Collections.<IMixinInfo>unmodifiableSet(this.mixins);
+    }
     
     /**
      * Get whether this class is a mixin
