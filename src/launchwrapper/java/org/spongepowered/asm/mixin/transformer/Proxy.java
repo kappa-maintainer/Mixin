@@ -25,9 +25,6 @@
 package org.spongepowered.asm.mixin.transformer;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.spongepowered.asm.logging.ILogger;
-import org.spongepowered.asm.mixin.MixinEnvironment;
-import org.spongepowered.asm.mixin.extensibility.IMixinProcessor;
 import org.spongepowered.asm.service.ILegacyClassTransformer;
 import org.spongepowered.asm.service.MixinService;
 
@@ -95,25 +92,5 @@ public final class Proxy implements IClassTransformer, ILegacyClassTransformer {
         
         return basicClass;
     }
-    
-    /**
-     * Tells the Mixin subsystem to process any Mixin configs that were added since we last checked.
-     * Mixins applied this way cannot transform classes that are already loaded.
-     * <p>A common use-case is to apply configs targeting classes that do not exist in the classloader before Mixin first initializes.</p>
-     */
-    public static void processLateConfigs() {
-        final IMixinProcessor processor = transformer.getProcessor();
-        final ILogger logger = MixinService.getService().getLogger("mixin");
-        if (processor.getPendingMixinConfigs().isEmpty()) {
-            logger.warn("Proxy::processLateConfigs was called with no pending configs.");
-            return;
-        }
-        if (!(processor instanceof MixinProcessor)) {
-            logger.error("Proxy.transformer.processor is not a MixinProcessor. Could not apply late configs.");
-            return;
-        }
-        final MixinProcessor mixinProcessor = (MixinProcessor) processor;
-        mixinProcessor.selectConfigs(MixinEnvironment.getCurrentEnvironment());
-        mixinProcessor.prepareConfigs(MixinEnvironment.getCurrentEnvironment(), mixinProcessor.extensions);
-    }
+
 }
