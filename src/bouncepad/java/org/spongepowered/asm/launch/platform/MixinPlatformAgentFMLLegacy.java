@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -71,7 +72,6 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
     private static final String LOAD_CORE_MOD_METHOD = "loadCoreMod";
     private static final String GET_REPARSEABLE_COREMODS_METHOD = "getReparseableCoremods";
     private static final String CORE_MOD_MANAGER_CLASS = "net.minecraftforge.fml.relauncher.CoreModManager";
-    private static final String CORE_MOD_MANAGER_CLASS_LEGACY = "cpw.mods.fml.relauncher.CoreModManager";
     private static final String GET_IGNORED_MODS_METHOD = "getIgnoredMods";
     private static final String GET_IGNORED_MODS_METHOD_LEGACY = "getLoadedCoremods";
     
@@ -339,12 +339,8 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
         }
         
         try {
-            try {
                 this.clCoreModManager = Class.forName(GlobalProperties.getString(
                         GlobalProperties.Keys.FML_CORE_MOD_MANAGER, MixinPlatformAgentFMLLegacy.CORE_MOD_MANAGER_CLASS));
-            } catch (ClassNotFoundException ex) {
-                this.clCoreModManager = Class.forName(MixinPlatformAgentFMLLegacy.CORE_MOD_MANAGER_CLASS_LEGACY);
-            }
         } catch (ClassNotFoundException ex) {
             MixinPlatformAgentAbstract.logger.info("FML platform manager could not load class {}. Proceeding without FML support.",
                     ex.getMessage());
@@ -407,7 +403,19 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
             Class<?> clFmlRemapperAdapter = Class.forName(MixinPlatformAgentFMLLegacy.FML_REMAPPER_ADAPTER_CLASS, true, Bouncepad.classLoader);
             Method mdCreate = clFmlRemapperAdapter.getDeclaredMethod("create");
             IRemapper remapper = (IRemapper)mdCreate.invoke(null);
-            MixinEnvironment.getDefaultEnvironment().getRemappers().add(remapper);
+            MixinEnvironment defaultEnv = MixinEnvironment.getDefaultEnvironment();
+            if ((boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")) {
+                //current.setOption(MixinEnvironment.Option.DISABLE_REFMAP, true);
+                defaultEnv.setOption(MixinEnvironment.Option.REFMAP_REMAP, true);
+                defaultEnv.setOption(MixinEnvironment.Option.REFMAP_REMAP_RESOURCE, true);
+                defaultEnv.setOption(MixinEnvironment.Option.REFMAP_REMAP_SOURCE_ENV, true);
+                //current.setOption(MixinEnvironment.Option.OBFUSCATION_TYPE, true);
+                System.setProperty("mixin.env.refMapRemapping", "build/createSrg2Mcp/output.tsrg");
+                System.setProperty("mixin.env.refMapRemappingEnv", "mcp");
+                //System.setProperty("mixin.env.obf", "deobf");
+            }
+            defaultEnv.getRemappers().add(remapper);
+
         } catch (Exception ex) {
             MixinPlatformAgentAbstract.logger.debug("Failed instancing FML remapper adapter, things will probably go horribly for notch-obf'd mods!");
         }
