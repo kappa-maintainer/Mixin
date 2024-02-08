@@ -63,6 +63,7 @@ public class MixinServiceLaunchWrapperBootstrap implements IMixinServiceBootstra
         }
         
         // Essential ones
+        /*
         Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.SERVICE_PACKAGE);
         Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.LAUNCH_PACKAGE);
         Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.LOGGING_PACKAGE);
@@ -71,7 +72,7 @@ public class MixinServiceLaunchWrapperBootstrap implements IMixinServiceBootstra
         Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.ASM_PACKAGE);
         Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.LEGACY_ASM_PACKAGE);
         Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.MIXIN_PACKAGE);
-        Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.MIXIN_UTIL_PACKAGE);
+        Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.MIXIN_UTIL_PACKAGE);*/
     }
 
 }

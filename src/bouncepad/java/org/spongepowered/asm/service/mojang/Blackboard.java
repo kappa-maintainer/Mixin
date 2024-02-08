@@ -56,7 +56,7 @@ public class Blackboard implements IGlobalPropertyService {
 
 
     public Blackboard() {
-        Bouncepad.classLoader.hashCode();
+        Launch.classLoader.hashCode();
     }
     
     @Override

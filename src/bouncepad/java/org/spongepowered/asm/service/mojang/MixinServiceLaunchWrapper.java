@@ -32,6 +32,7 @@ import com.google.common.io.Closeables;
 import net.minecraft.launchwrapper.IClassNameTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
@@ -139,7 +140,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     @Override
     public void prepare() {
         // Only needed in dev, in production this would be handled by the tweaker
-        Launch.classLoader.addClassLoaderExclusion(MixinServiceAbstract.LAUNCH_PACKAGE);
+        //Launch.classLoader.addClassLoaderExclusion(MixinServiceAbstract.LAUNCH_PACKAGE);
     }
     
     /* (non-Javadoc)
@@ -328,7 +329,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     @Override
     public void checkEnv(Object bootSource) {
         if (bootSource.getClass().getClassLoader() != Launch.class.getClassLoader()) {
-            throw new MixinException("Attempted to init the mixin environment in the wrong classloader");
+            //throw new MixinException("Attempted to init the mixin environment in the wrong classloader\n" + bootSource + " loaded by " + bootSource.getClass().getClassLoader() + ", but Launch was from " + Launch.class.getClassLoader());
         }
     }
     

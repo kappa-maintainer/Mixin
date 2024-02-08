@@ -25,7 +25,10 @@
 package org.spongepowered.asm.launch.platform.container;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.JarURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -49,6 +52,13 @@ public class ContainerHandleURI implements IContainerHandle {
     private final MainAttributes attributes;
 
     public ContainerHandleURI(URI uri) {
+        if (uri.toString().startsWith("jar")) {
+            try {
+                JarURLConnection connection = (JarURLConnection) uri.toURL().openConnection();
+                uri = connection.getJarFileURL().toURI();
+            } catch (Exception ignored) {
+            }
+        }
         this.uri = uri;
         this.attributes = MainAttributes.of(uri);
     }
