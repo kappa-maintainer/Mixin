@@ -52,7 +52,6 @@ import org.spongepowered.asm.util.Constants;
 import org.spongepowered.asm.util.IConsumer;
 
 import net.minecraft.launchwrapper.ITweaker;
-import com.cleanroommc.bouncepad.Bouncepad;
 
 /**
  * Platform agent for use under FML and LaunchWrapper.
@@ -237,7 +236,7 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
         Method mdLoadCoreMod = this.clCoreModManager.getDeclaredMethod(GlobalProperties.getString(GlobalProperties.Keys.FML_LOAD_CORE_MOD,
                 MixinPlatformAgentFMLLegacy.LOAD_CORE_MOD_METHOD), LaunchClassLoader.class, String.class, File.class);
         mdLoadCoreMod.setAccessible(true);
-        ITweaker wrapper = (ITweaker)mdLoadCoreMod.invoke(null, Bouncepad.classLoader, coreModName, this.file);
+        ITweaker wrapper = (ITweaker)mdLoadCoreMod.invoke(null, Launch.classLoader, coreModName, this.file);
         if (wrapper == null) {
             MixinPlatformAgentAbstract.logger.debug("Core plugin {} could not be loaded.", coreModName);
             return null;
@@ -302,7 +301,7 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
     public void inject() {
         if (this.coreModWrapper != null && this.checkForCoInitialisation()) {
             MixinPlatformAgentAbstract.logger.debug("FML agent is co-initiralising coremod instance {} for {}", this.coreModWrapper, this.handle);
-            this.coreModWrapper.injectIntoClassLoader(Bouncepad.classLoader);
+            this.coreModWrapper.injectIntoClassLoader(Launch.classLoader);
         }
     }
 
@@ -400,7 +399,7 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
     private void injectRemapper() {
         try {
             MixinPlatformAgentAbstract.logger.debug("Creating FML remapper adapter: {}", MixinPlatformAgentFMLLegacy.FML_REMAPPER_ADAPTER_CLASS);
-            Class<?> clFmlRemapperAdapter = Class.forName(MixinPlatformAgentFMLLegacy.FML_REMAPPER_ADAPTER_CLASS, true, Bouncepad.classLoader);
+            Class<?> clFmlRemapperAdapter = Class.forName(MixinPlatformAgentFMLLegacy.FML_REMAPPER_ADAPTER_CLASS, true, Launch.classLoader);
             Method mdCreate = clFmlRemapperAdapter.getDeclaredMethod("create");
             IRemapper remapper = (IRemapper)mdCreate.invoke(null);
             MixinEnvironment defaultEnv = MixinEnvironment.getDefaultEnvironment();
@@ -441,7 +440,7 @@ public class MixinPlatformAgentFMLLegacy extends MixinPlatformAgentAbstract impl
             }
         }
 
-        return MixinPlatformAgentAbstract.invokeStringMethod(Bouncepad.classLoader, MixinPlatformAgentFMLLegacy.NEW_LAUNCH_HANDLER_CLASS,
+        return MixinPlatformAgentAbstract.invokeStringMethod(Launch.classLoader, MixinPlatformAgentFMLLegacy.NEW_LAUNCH_HANDLER_CLASS,
                 MixinPlatformAgentFMLLegacy.GETSIDE_METHOD);
     }
 

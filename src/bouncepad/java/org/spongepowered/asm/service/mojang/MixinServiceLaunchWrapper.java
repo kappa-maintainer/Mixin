@@ -53,6 +53,7 @@ import org.spongepowered.asm.util.Constants;
 import org.spongepowered.asm.util.Files;
 import org.spongepowered.asm.util.perf.Profiler;
 import org.spongepowered.asm.util.perf.Profiler.Section;
+import top.outlands.TransformHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -356,7 +357,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
      */
     @Override
     public Collection<ITransformer> getTransformers() {
-        List<IClassTransformer> transformers = Launch.classLoader.getTransformers();
+        List<IClassTransformer> transformers = TransformHandler.getTransformers();
         List<ITransformer> wrapped = new ArrayList<ITransformer>(transformers.size());
         for (IClassTransformer transformer : transformers) {
             if (transformer instanceof ITransformer) {
@@ -565,7 +566,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     }
 
     private void findNameTransformer() {
-        List<IClassTransformer> transformers = Launch.classLoader.getTransformers();
+        List<IClassTransformer> transformers = TransformHandler.getTransformers();
         for (IClassTransformer transformer : transformers) {
             if (transformer instanceof IClassNameTransformer) {
                 MixinServiceLaunchWrapper.logger.debug("Found name transformer: {}", transformer.getClass().getName());

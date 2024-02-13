@@ -24,7 +24,7 @@
  */
 package org.spongepowered.asm.service.mojang;
 
-import com.cleanroommc.bouncepad.Bouncepad;
+import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.service.IMixinServiceBootstrap;
 import org.spongepowered.asm.service.ServiceInitialisationException;
 
@@ -57,7 +57,7 @@ public class MixinServiceLaunchWrapperBootstrap implements IMixinServiceBootstra
     @Override
     public void bootstrap() {
         try {
-            Bouncepad.classLoader.hashCode();
+            Launch.classLoader.hashCode();
         } catch (Throwable th) {
             throw new ServiceInitialisationException(this.getName() + " is not available");
         }

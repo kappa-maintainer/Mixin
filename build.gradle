@@ -145,8 +145,8 @@ sourceSets {
     }*/
     bouncepad {
         compileClasspath += main.output
-        ext.languageVersion = 17
-        ext.compatibility = '17'
+        ext.languageVersion = 21
+        ext.compatibility = '21'
     }
 
 }
@@ -192,9 +192,9 @@ dependencies {
         exclude module: 'jopt-simple'
     }
 
-    bouncepadImplementation ('org.apache.logging.log4j:log4j-core:2.11.2')
+    bouncepadImplementation ('org.apache.logging.log4j:log4j-core:2.22.1')
     bouncepadImplementation ('org.ow2.asm:asm-tree:$asmVersion')
-    bouncepadImplementation ('com.cleanroommc:bouncepad:0.4.10-cursed') {
+    bouncepadImplementation ('top.outlands:foundation:0.2.0') {
         exclude module: 'lwjgl'
         exclude module: 'asm-debug-all'
         exclude module: 'jopt-simple'

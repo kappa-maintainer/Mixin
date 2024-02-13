@@ -24,7 +24,6 @@
  */
 package org.spongepowered.asm.service.mojang;
 
-import com.cleanroommc.bouncepad.Bouncepad;
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.service.IGlobalPropertyService;
 import org.spongepowered.asm.service.IPropertyKey;
