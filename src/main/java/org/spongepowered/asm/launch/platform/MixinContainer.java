@@ -37,7 +37,7 @@ import org.spongepowered.asm.launch.platform.container.IContainerHandle;
 import org.spongepowered.asm.service.MixinService;
 
 /**
- * A collection of {@link IMixinPlatformAgent} platform agents) for a particular
+ * A collection of {@link IMixinPlatformAgent} platform agents for a particular
  * container
  */
 public class MixinContainer {

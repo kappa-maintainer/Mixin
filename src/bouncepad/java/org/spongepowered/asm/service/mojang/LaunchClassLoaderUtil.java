@@ -24,12 +24,15 @@
  */
 package org.spongepowered.asm.service.mojang;
 
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.spongepowered.asm.service.IClassTracker;
+import top.outlands.foundation.boot.ActualClassLoader;
+import top.outlands.foundation.trie.PrefixTrie;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -54,8 +57,8 @@ final class LaunchClassLoaderUtil implements IClassTracker {
     // Reflected fields
     private final Map<String, Class<?>> cachedClasses;
     private final Set<String> invalidClasses;
-    private final Set<String> classLoaderExceptions;
-    private final Set<String> transformerExceptions;
+    private final PrefixTrie<Boolean> classLoaderExceptions;
+    private final PrefixTrie<Boolean> transformerExceptions;
 
     /**
      * Singleton, use factory to get an instance
@@ -64,10 +67,10 @@ final class LaunchClassLoaderUtil implements IClassTracker {
      */
     LaunchClassLoaderUtil(LaunchClassLoader classLoader) {
         this.classLoader = classLoader;
-        this.cachedClasses = LaunchClassLoaderUtil.<Map<String, Class<?>>>getField(classLoader, LaunchClassLoaderUtil.CACHED_CLASSES_FIELD);
-        this.invalidClasses = LaunchClassLoaderUtil.<Set<String>>getField(classLoader, LaunchClassLoaderUtil.INVALID_CLASSES_FIELD);
-        this.classLoaderExceptions = LaunchClassLoaderUtil.<Set<String>>getField(classLoader, LaunchClassLoaderUtil.CLASS_LOADER_EXCEPTIONS_FIELD);
-        this.transformerExceptions = LaunchClassLoaderUtil.<Set<String>>getField(classLoader, LaunchClassLoaderUtil.TRANSFORMER_EXCEPTIONS_FIELD);
+        this.cachedClasses = Launch.classLoader.getCachedClasses();
+        this.invalidClasses = Launch.classLoader.getInvalidClasses();
+        this.classLoaderExceptions = ActualClassLoader.classLoaderExceptions;
+        this.transformerExceptions = ActualClassLoader.transformerExceptions;
     }
 
     /**
@@ -127,13 +130,11 @@ final class LaunchClassLoaderUtil implements IClassTracker {
      *      names
      */
     boolean isClassClassLoaderExcluded(String name, String transformedName) {
-        for (final String exception : this.getClassLoaderExceptions()) {
-            if ((transformedName != null && transformedName.startsWith(exception)) || name.startsWith(exception)) {
-                return true;
-            }
-        }
-        
-        return false;
+        PrefixTrie<Boolean> trie = getClassLoaderExceptions();
+        if (transformedName != null)
+            return trie.getFirstKeyValueNode(name) != null || trie.getFirstKeyValueNode(transformedName) != null;
+        else
+            return trie.getFirstKeyValueNode(name) != null;
     }
 
     /**
@@ -146,13 +147,11 @@ final class LaunchClassLoaderUtil implements IClassTracker {
      *      names
      */
     boolean isClassTransformerExcluded(String name, String transformedName) {
-        for (final String exception : this.getTransformerExceptions()) {
-            if ((transformedName != null && transformedName.startsWith(exception)) || name.startsWith(exception)) {
-                return true;
-            }
-        }
-        
-        return false;
+        PrefixTrie<Boolean> trie = getTransformerExceptions();
+        if (transformedName != null)
+            return trie.getFirstKeyValueNode(name) != null || trie.getFirstKeyValueNode(transformedName) != null;
+        else
+            return trie.getFirstKeyValueNode(name) != null;
     }
     
     /**
@@ -172,21 +171,15 @@ final class LaunchClassLoaderUtil implements IClassTracker {
     /**
      * Get the classloader exclusions from the target classloader
      */
-    Set<String> getClassLoaderExceptions() {
-        if (this.classLoaderExceptions != null) {
-            return this.classLoaderExceptions;
-        }
-        return Collections.<String>emptySet();
+    PrefixTrie<Boolean> getClassLoaderExceptions() {
+        return Objects.requireNonNullElseGet(this.classLoaderExceptions, PrefixTrie::new);
     }
     
     /**
      * Get the transformer exclusions from the target classloader
      */
-    Set<String> getTransformerExceptions() {
-        if (this.transformerExceptions != null) {
-            return this.transformerExceptions;
-        }
-        return Collections.<String>emptySet();
+    PrefixTrie<Boolean> getTransformerExceptions() {
+        return Objects.requireNonNullElseGet(this.transformerExceptions, PrefixTrie::new);
     }
 
     @SuppressWarnings("unchecked")

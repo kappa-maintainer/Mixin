@@ -122,14 +122,9 @@ public abstract class MixinBootstrap {
     }
 
     /**
-     * A stub for backward compatibility
-     */
-    public static void init() {}
-
-    /**
      * Initialise the mixin subsystem
      */
-    public static void realInit() {
+    public static void init() {
         if (!MixinBootstrap.start()) {
             return;
         }

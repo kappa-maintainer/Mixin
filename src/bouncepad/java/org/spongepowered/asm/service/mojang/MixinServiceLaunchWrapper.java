@@ -32,7 +32,6 @@ import com.google.common.io.Closeables;
 import net.minecraft.launchwrapper.IClassNameTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
@@ -46,14 +45,13 @@ import org.spongepowered.asm.launch.platform.container.IContainerHandle;
 import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.mixin.MixinEnvironment.CompatibilityLevel;
 import org.spongepowered.asm.mixin.MixinEnvironment.Phase;
-import org.spongepowered.asm.mixin.throwables.MixinException;
 import org.spongepowered.asm.service.*;
 import org.spongepowered.asm.transformers.MixinClassReader;
 import org.spongepowered.asm.util.Constants;
 import org.spongepowered.asm.util.Files;
 import org.spongepowered.asm.util.perf.Profiler;
 import org.spongepowered.asm.util.perf.Profiler.Section;
-import top.outlands.TransformHandler;
+import top.outlands.foundation.TransformerDelegate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -179,9 +177,11 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
      */
     @Override
     public void init() {
+        /*
         if (MixinServiceLaunchWrapper.findInStackTrace("net.minecraft.launchwrapper.Launch", "launch") < 4) {
             MixinServiceLaunchWrapper.logger.error("MixinBootstrap.doInit() called during a tweak constructor!");
         }
+        */
 
         List<String> tweakClasses = GlobalProperties.<List<String>>get(MixinServiceLaunchWrapper.BLACKBOARD_KEY_TWEAKCLASSES);
         if (tweakClasses != null) {
@@ -357,7 +357,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
      */
     @Override
     public Collection<ITransformer> getTransformers() {
-        List<IClassTransformer> transformers = TransformHandler.getTransformers();
+        List<IClassTransformer> transformers = TransformerDelegate.getTransformers();
         List<ITransformer> wrapped = new ArrayList<ITransformer>(transformers.size());
         for (IClassTransformer transformer : transformers) {
             if (transformer instanceof ITransformer) {
@@ -566,7 +566,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     }
 
     private void findNameTransformer() {
-        List<IClassTransformer> transformers = TransformHandler.getTransformers();
+        List<IClassTransformer> transformers = TransformerDelegate.getTransformers();
         for (IClassTransformer transformer : transformers) {
             if (transformer instanceof IClassNameTransformer) {
                 MixinServiceLaunchWrapper.logger.debug("Found name transformer: {}", transformer.getClass().getName());

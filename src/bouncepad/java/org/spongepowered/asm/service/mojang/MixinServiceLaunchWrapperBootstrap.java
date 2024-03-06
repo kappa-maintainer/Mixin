@@ -35,18 +35,9 @@ import org.spongepowered.asm.service.ServiceInitialisationException;
  */
 public class MixinServiceLaunchWrapperBootstrap implements IMixinServiceBootstrap {
 
-    private static final String SERVICE_PACKAGE = "org.spongepowered.asm.service.";
-    private static final String LAUNCH_PACKAGE = "org.spongepowered.asm.Bouncepad.";
-    private static final String LOGGING_PACKAGE = "org.spongepowered.asm.logging.";
-    
-    private static final String MIXIN_UTIL_PACKAGE = "org.spongepowered.asm.util.";
-    private static final String LEGACY_ASM_PACKAGE = "org.spongepowered.asm.lib.";
-    private static final String ASM_PACKAGE = "org.objectweb.asm.";
-    private static final String MIXIN_PACKAGE = "org.spongepowered.asm.mixin.";
-
     @Override
     public String getName() {
-        return "BouncePad";
+        return "Foundation";
     }
 
     @Override
@@ -61,18 +52,7 @@ public class MixinServiceLaunchWrapperBootstrap implements IMixinServiceBootstra
         } catch (Throwable th) {
             throw new ServiceInitialisationException(this.getName() + " is not available");
         }
-        
-        // Essential ones
-        /*
-        Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.SERVICE_PACKAGE);
-        Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.LAUNCH_PACKAGE);
-        Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.LOGGING_PACKAGE);
 
-        // Important ones
-        Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.ASM_PACKAGE);
-        Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.LEGACY_ASM_PACKAGE);
-        Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.MIXIN_PACKAGE);
-        Bouncepad.classLoader.addClassLoaderExclusion(MixinServiceLaunchWrapperBootstrap.MIXIN_UTIL_PACKAGE);*/
     }
 
 }
