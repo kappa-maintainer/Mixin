@@ -29,6 +29,7 @@ import org.spongepowered.asm.service.ILegacyClassTransformer;
 import org.spongepowered.asm.service.MixinService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -93,4 +94,8 @@ public final class Proxy implements IClassTransformer, ILegacyClassTransformer {
         return basicClass;
     }
 
+    @Override
+    public int getPriority() {
+        return Integer.MAX_VALUE;
+    }
 }

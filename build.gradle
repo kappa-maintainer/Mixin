@@ -194,7 +194,7 @@ dependencies {
 
     bouncepadImplementation ('org.apache.logging.log4j:log4j-core:2.22.1')
     bouncepadImplementation ('org.ow2.asm:asm-tree:$asmVersion')
-    bouncepadImplementation ('top.outlands:foundation:0.3.0') {
+    bouncepadImplementation ('top.outlands:foundation:0.9.1') {
         exclude module: 'lwjgl'
         exclude module: 'asm-debug-all'
         exclude module: 'jopt-simple'

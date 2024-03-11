@@ -109,6 +109,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
      * Class name transformer (if present)
      */
     private IClassNameTransformer nameTransformer;
+    private static boolean registered = false;
     
     public MixinServiceLaunchWrapper() {
         this.classLoaderUtil = new LaunchClassLoaderUtil(Launch.classLoader);
@@ -197,8 +198,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     @Override
     public Collection<String> getPlatformAgents() {
         return ImmutableList.<String>of(
-            "org.spongepowered.asm.launch.platform.MixinPlatformAgentFMLLegacy",
-            "org.spongepowered.asm.launch.platform.MixinPlatformAgentLiteLoaderLegacy"
+            "org.spongepowered.asm.launch.platform.MixinPlatformAgentFMLLegacy"
         );
     }
     
@@ -319,8 +319,11 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
      */
     @Override
     public void beginPhase() {
-        Launch.classLoader.registerTransformer(MixinServiceLaunchWrapper.TRANSFORMER_PROXY_CLASS);
-        this.delegatedTransformers = null;
+        if (!registered) {
+            Launch.classLoader.registerTransformer(MixinServiceLaunchWrapper.TRANSFORMER_PROXY_CLASS);
+            this.delegatedTransformers = null;
+            registered = true;
+        }
     }
     
     /* (non-Javadoc)
