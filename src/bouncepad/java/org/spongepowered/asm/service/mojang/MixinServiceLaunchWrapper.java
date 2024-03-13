@@ -198,7 +198,8 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     @Override
     public Collection<String> getPlatformAgents() {
         return ImmutableList.<String>of(
-            "org.spongepowered.asm.launch.platform.MixinPlatformAgentFMLLegacy"
+                "org.spongepowered.asm.launch.platform.MixinPlatformAgentFMLLegacy",
+                "org.spongepowered.asm.launch.platform.MixinPlatformAgentLiteLoaderLegacy"
         );
     }
     
