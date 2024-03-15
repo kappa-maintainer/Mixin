@@ -68,7 +68,7 @@ public class AccessorGeneratorFieldSetter extends AccessorGeneratorField {
         }
         
         if (this.info.getMixin().getOption(Option.DEBUG_VERBOSE)) {
-            MixinService.getService().getLogger("mixin").warn("{} for final field {}::{} is not @Mutable", this.info,
+            MixinService.getService().getLogger("mixin").warn("{} for final field {}::{} is not @Mutable. This won't work on newer Java, automatically stripping...", this.info,
                     ((MixinTargetContext)this.info.getMixin()).getTarget(), this.targetField.name);
         }                    
     }
@@ -79,6 +79,8 @@ public class AccessorGeneratorFieldSetter extends AccessorGeneratorField {
     @Override
     public MethodNode generate() {
         if (this.mutable) {
+            this.targetField.access &= ~Opcodes.ACC_FINAL;
+        } else if ((this.targetField.access & Opcodes.ACC_FINAL) != 0) {
             this.targetField.access &= ~Opcodes.ACC_FINAL;
         }
         

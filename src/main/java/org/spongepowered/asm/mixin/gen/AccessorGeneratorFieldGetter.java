@@ -29,21 +29,51 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+import org.spongepowered.asm.mixin.MixinEnvironment;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.gen.throwables.InvalidAccessorException;
+import org.spongepowered.asm.mixin.transformer.ClassInfo;
+import org.spongepowered.asm.mixin.transformer.MixinTargetContext;
+import org.spongepowered.asm.service.MixinService;
+import org.spongepowered.asm.util.Bytecode;
 
 /**
  * Generator for instance field getters
  */
 public class AccessorGeneratorFieldGetter extends AccessorGeneratorField {
-    
+    /**
+     * True if the accessor method is decorated with {@link Mutable}
+     */
+    private boolean mutable;
     public AccessorGeneratorFieldGetter(AccessorInfo info) {
         super(info);
     }
+    @Override
+    public void validate() {
 
+        super.validate();
+
+        ClassInfo.Method method = this.info.getClassInfo().findMethod(this.info.getMethod());
+        this.mutable = method.isDecoratedMutable();
+        if (this.mutable || !Bytecode.hasFlag(this.targetField, Opcodes.ACC_FINAL)) {
+            return;
+        }
+
+        if (this.info.getMixin().getOption(MixinEnvironment.Option.DEBUG_VERBOSE)) {
+            MixinService.getService().getLogger("mixin").warn("{} for final field {}::{} is not @Mutable. This won't work on newer Java, automatically stripping...", this.info,
+                    ((MixinTargetContext)this.info.getMixin()).getTarget(), this.targetField.name);
+        }
+    }
     /* (non-Javadoc)
      * @see org.spongepowered.asm.mixin.gen.AccessorGenerator#generate()
      */
     @Override
     public MethodNode generate() {
+        if (this.mutable) {
+            this.targetField.access &= ~Opcodes.ACC_FINAL;
+        } else if ((this.targetField.access & Opcodes.ACC_FINAL) != 0) {
+            this.targetField.access &= ~Opcodes.ACC_FINAL;
+        }
         MethodNode method = this.createMethod(this.targetType.getSize(), this.targetType.getSize());
         if (!this.targetIsStatic) {
             method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
