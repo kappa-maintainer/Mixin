@@ -152,10 +152,6 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
         if (command != null && command.contains("GradleStart")) {
             System.setProperty("mixin.env.remapRefMap", "true");
         }
-
-        if (MixinServiceLaunchWrapper.findInStackTrace("net.minecraft.launchwrapper.Launch", "launch") > 132) {
-            return Phase.DEFAULT;
-        }
         return Phase.PREINIT;
     }
     
@@ -173,24 +169,6 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
         return new LoggerAdapterLog4j2(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.spongepowered.asm.service.IMixinService#init()
-     */
-    @Override
-    public void init() {
-        /*
-        if (MixinServiceLaunchWrapper.findInStackTrace("net.minecraft.launchwrapper.Launch", "launch") < 4) {
-            MixinServiceLaunchWrapper.logger.error("MixinBootstrap.doInit() called during a tweak constructor!");
-        }
-        */
-
-        List<String> tweakClasses = GlobalProperties.<List<String>>get(MixinServiceLaunchWrapper.BLACKBOARD_KEY_TWEAKCLASSES);
-        if (tweakClasses != null) {
-            tweakClasses.add(MixinServiceLaunchWrapper.STATE_TWEAKER);
-        }
-        
-        super.init();
-    }
     
     /* (non-Javadoc)
      * @see org.spongepowered.asm.service.IMixinService#getPlatformAgents()

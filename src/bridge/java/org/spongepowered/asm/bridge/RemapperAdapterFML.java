@@ -26,32 +26,28 @@ package org.spongepowered.asm.bridge;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.function.Function;
 
+import org.objectweb.asm.commons.Remapper;
 import org.spongepowered.asm.mixin.extensibility.IRemapper;
 
 /**
  * Remapper adapter which remaps using FML's deobfuscating remapper
  */
 public final class RemapperAdapterFML extends RemapperAdapter {
+
+    private final Function<String, String> unmap;
     
-    private static final String DEOBFUSCATING_REMAPPER_CLASS = "fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper";
-    private static final String DEOBFUSCATING_REMAPPER_CLASS_FORGE = "net.minecraftforge." + RemapperAdapterFML.DEOBFUSCATING_REMAPPER_CLASS;
-    private static final String DEOBFUSCATING_REMAPPER_CLASS_LEGACY = "cpw.mods." + RemapperAdapterFML.DEOBFUSCATING_REMAPPER_CLASS;
-    private static final String INSTANCE_FIELD = "INSTANCE";
-    private static final String UNMAP_METHOD = "unmap";
-    
-    private final Method mdUnmap;
-    
-    private RemapperAdapterFML(org.objectweb.asm.commons.Remapper remapper, Method mdUnmap) {
+    private RemapperAdapterFML(org.objectweb.asm.commons.Remapper remapper, Function<String, String> unmap) {
         super(remapper);
         this.logger.info("Initialised Mixin FML Remapper Adapter with {}", remapper);
-        this.mdUnmap = mdUnmap;
+        this.unmap = unmap;
     }
 
     @Override
     public String unmap(String typeName) {
         try {
-            return this.mdUnmap.invoke(this.remapper, typeName).toString();
+            return this.unmap.apply(typeName);
         } catch (Exception ex) {
             return typeName;
         }
@@ -60,29 +56,9 @@ public final class RemapperAdapterFML extends RemapperAdapter {
     /**
      * Factory method
      */
-    public static IRemapper create() {
-        try {
-            Class<?> clDeobfRemapper = RemapperAdapterFML.getFMLDeobfuscatingRemapper();
-            Field singletonField = clDeobfRemapper.getDeclaredField(RemapperAdapterFML.INSTANCE_FIELD);
-            Method mdUnmap = clDeobfRemapper.getDeclaredMethod(RemapperAdapterFML.UNMAP_METHOD, String.class);
-            org.objectweb.asm.commons.Remapper remapper = (org.objectweb.asm.commons.Remapper)singletonField.get(null);
-            return new RemapperAdapterFML(remapper, mdUnmap);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    public static IRemapper create(Remapper remapper, Function<String, String> unmap) {
+        return new RemapperAdapterFML(remapper, unmap);
     }
 
-    /**
-     * Attempt to get the FML Deobfuscating Remapper, tries the post-1.8
-     * namespace first and falls back to 1.7.10 if class lookup fails
-     */
-    private static Class<?> getFMLDeobfuscatingRemapper() throws ClassNotFoundException {
-        try {
-            return Class.forName(RemapperAdapterFML.DEOBFUSCATING_REMAPPER_CLASS_FORGE);
-        } catch (ClassNotFoundException ex) {
-            return Class.forName(RemapperAdapterFML.DEOBFUSCATING_REMAPPER_CLASS_LEGACY);
-        }
-    }
 
 }

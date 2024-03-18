@@ -1602,7 +1602,7 @@ public final class MixinEnvironment implements ITokenProvider {
      * @param phase phase to go to 
      */
     @SuppressWarnings("deprecation")
-    static void gotoPhase(Phase phase) {
+    public static void gotoPhase(Phase phase) {
         if (phase == null || phase.ordinal < 0) {
             throw new IllegalArgumentException("Cannot go to the specified phase, phase is null or invalid");
         }
