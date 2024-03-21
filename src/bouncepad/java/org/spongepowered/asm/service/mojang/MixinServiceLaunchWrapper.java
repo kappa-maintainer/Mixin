@@ -71,9 +71,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     public static final Keys BLACKBOARD_KEY_TWEAKS = Keys.of("Tweaks");
     
     private static final String MIXIN_TWEAKER_CLASS = MixinServiceAbstract.LAUNCH_PACKAGE + "MixinTweaker";
-    
     // Consts
-    private static final String STATE_TWEAKER = MixinServiceAbstract.MIXIN_PACKAGE + "EnvironmentStateTweaker";
     private static final String TRANSFORMER_PROXY_CLASS = MixinServiceAbstract.MIXIN_PACKAGE + "transformer.Proxy";
     
     /**
@@ -176,8 +174,8 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     @Override
     public Collection<String> getPlatformAgents() {
         return ImmutableList.<String>of(
-                "org.spongepowered.asm.launch.platform.MixinPlatformAgentFMLLegacy",
-                "org.spongepowered.asm.launch.platform.MixinPlatformAgentLiteLoaderLegacy"
+                "org.spongepowered.asm.launch.platform.MixinPlatformAgentFMLLegacy"
+                //"org.spongepowered.asm.launch.platform.MixinPlatformAgentLiteLoaderLegacy"
         );
     }
     

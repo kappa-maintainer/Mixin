@@ -96,6 +96,6 @@ public final class Proxy implements IClassTransformer, ILegacyClassTransformer {
 
     @Override
     public int getPriority() {
-        return Integer.MAX_VALUE;
+        return 1000;
     }
 }
