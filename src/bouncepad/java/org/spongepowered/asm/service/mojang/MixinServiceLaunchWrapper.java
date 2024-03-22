@@ -298,9 +298,9 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     public void beginPhase() {
         if (!registered) {
             Launch.classLoader.registerTransformer(MixinServiceLaunchWrapper.TRANSFORMER_PROXY_CLASS);
-            this.delegatedTransformers = null;
             registered = true;
         }
+        this.delegatedTransformers = null;
     }
     
     /* (non-Javadoc)

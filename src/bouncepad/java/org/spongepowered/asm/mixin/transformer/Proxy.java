@@ -42,37 +42,17 @@ import java.util.List;
 public final class Proxy implements IClassTransformer, ILegacyClassTransformer {
     
     /**
-     * All existing proxies
-     */
-    private static List<Proxy> proxies = new ArrayList<Proxy>();
-    
-    /**
      * Actual mixin transformer instance
      */
     public static MixinTransformer transformer = new MixinTransformer();
     
-    /**
-     * True if this is the active proxy, newer proxies disable their older
-     * siblings
-     */
-    private boolean isActive = true;
-    
     public Proxy() {
-        for (Proxy proxy : Proxy.proxies) {
-            proxy.isActive = false;
-        }
-        
-        Proxy.proxies.add(this);
-        MixinService.getService().getLogger("mixin").debug("Adding new mixin transformer proxy #{}", Proxy.proxies.size());
+        MixinService.getService().getLogger("mixin").debug("Adding mixin transformer proxy");
     }
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        if (this.isActive) {
-            return Proxy.transformer.transformClassBytes(name, transformedName, basicClass);
-        }
-        
-        return basicClass;
+        return Proxy.transformer.transformClassBytes(name, transformedName, basicClass);
     }
 
     @Override
@@ -87,11 +67,7 @@ public final class Proxy implements IClassTransformer, ILegacyClassTransformer {
 
     @Override
     public byte[] transformClassBytes(String name, String transformedName, byte[] basicClass) {
-        if (this.isActive) {
-            return Proxy.transformer.transformClassBytes(name, transformedName, basicClass);
-        }
-        
-        return basicClass;
+        return Proxy.transformer.transformClassBytes(name, transformedName, basicClass);
     }
 
     @Override

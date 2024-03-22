@@ -103,7 +103,7 @@ final class LaunchClassLoaderUtil implements IClassTracker {
             restrictions = "PACKAGE_CLASSLOADER_EXCLUSION";
         }
         if (this.isClassTransformerExcluded(className, null)) {
-            restrictions = (restrictions.length() > 0 ? restrictions + "," : "") + "PACKAGE_TRANSFORMER_EXCLUSION";
+            restrictions = (!restrictions.isEmpty() ? restrictions + "," : "") + "PACKAGE_TRANSFORMER_EXCLUSION";
         }
         return restrictions;
     }

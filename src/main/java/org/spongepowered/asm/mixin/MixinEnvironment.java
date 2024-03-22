@@ -1485,12 +1485,7 @@ public final class MixinEnvironment implements ITokenProvider {
             MixinEnvironment.currentPhase = phase;
             MixinEnvironment env = MixinEnvironment.getEnvironment(phase);
             Profiler.setActive(env.getOption(Option.DEBUG_PROFILER));
-            
-            // AMS - Temp wiring to avoid merging multiphase
-            IMixinService service = MixinService.getService();
-            if (service instanceof MixinServiceAbstract) {
-                ((MixinServiceAbstract)service).wire(phase, new PhaseConsumer());
-            }
+
         }
     }
     
@@ -1615,10 +1610,6 @@ public final class MixinEnvironment implements ITokenProvider {
         MixinEnvironment.currentPhase = phase;
         MixinEnvironment.currentEnvironment = MixinEnvironment.getEnvironment(MixinEnvironment.getCurrentPhase());
 
-        // AMS - Temp wiring to avoid merging multiphase
-        if (service instanceof MixinServiceAbstract && phase == Phase.DEFAULT) {
-            ((MixinServiceAbstract)service).unwire();
-        }
         
     }
 }
