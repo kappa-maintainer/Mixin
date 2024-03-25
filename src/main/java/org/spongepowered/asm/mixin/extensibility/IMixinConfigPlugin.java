@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.objectweb.asm.tree.ClassNode;
+import org.spongepowered.asm.mixin.transformer.Config;
 
 /**
  * <p>A companion plugin for a mixin configuration object. Objects implementing
@@ -52,6 +53,8 @@ public interface IMixinConfigPlugin {
      * @param mixinPackage The mixin root package from the config
      */
     public abstract void onLoad(String mixinPackage);
+
+    default public void injectConfig(Config config){}
 
     /**
      * Called only if the "referenceMap" key in the config is <b>not</b> set.

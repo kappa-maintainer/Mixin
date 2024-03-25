@@ -101,12 +101,12 @@ configurations {
 sourceSets {
     legacy {
         ext.languageVersion = 8
-        ext.compatibility = '1.6'
+        ext.compatibility = '1.8'
     }
     main {
         compileClasspath += legacy.output
         ext.languageVersion = 8
-        ext.compatibility = '1.6'
+        ext.compatibility = '1.8'
     }
     ap {
         compileClasspath += main.output
@@ -116,13 +116,13 @@ sourceSets {
     fernflower {
         compileClasspath += main.output
         ext.languageVersion = 8
-        ext.compatibility = '1.6'
+        ext.compatibility = '1.8'
         ext.modularityExcluded = true
     }
     agent {
         compileClasspath += main.output
         ext.languageVersion = 8
-        ext.compatibility = '1.6'
+        ext.compatibility = '1.8'
     }
     bridge {
         compileClasspath += main.output

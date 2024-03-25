@@ -129,7 +129,10 @@ class PluginHandle {
     }
 
     boolean shouldApplyMixin(String targetName, String className) {
-        return this.plugin == null || this.plugin.shouldApplyMixin(targetName, className);
+        if (this.plugin == null)
+            return true;
+        this.plugin.injectConfig(this.parent.getHandle());
+        return this.plugin.shouldApplyMixin(targetName, className);
     }
     
     /**

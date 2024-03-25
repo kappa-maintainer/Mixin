@@ -417,7 +417,7 @@ final class MixinConfig implements Comparable<MixinConfig>, IMixinConfig {
         // If no parent, initialise config options
         this.env = this.parseSelector(this.selector, fallbackEnvironment);
         this.verboseLogging |= this.env.getOption(Option.DEBUG_VERBOSE);
-        this.required = this.requiredValue != null && this.requiredValue.booleanValue() && !this.env.getOption(Option.IGNORE_REQUIRED);
+        this.required = this.requiredValue != null && this.requiredValue && !this.env.getOption(Option.IGNORE_REQUIRED);
         this.initPriority(IMixinConfig.DEFAULT_PRIORITY, IMixinConfig.DEFAULT_PRIORITY);
         
         if (this.injectorOptions == null) {
@@ -1017,7 +1017,7 @@ final class MixinConfig implements Comparable<MixinConfig>, IMixinConfig {
     // AMS - temp
     public boolean select(MixinEnvironment environment) {
         this.visited = true;
-        return this.env == environment;
+        return environment.getPhase().laterThan(this.env.getPhase());
     }
     
     // AMS - temp

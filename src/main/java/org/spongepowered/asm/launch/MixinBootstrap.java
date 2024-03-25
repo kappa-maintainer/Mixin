@@ -151,7 +151,7 @@ public abstract class MixinBootstrap {
             MixinBootstrap.initialised = true;
             
             Phase initialPhase = MixinService.getService().getInitialPhase();
-            if (initialPhase == Phase.DEFAULT) {
+            if (initialPhase == Phase.DEFAULT || initialPhase == Phase.MOD) {
                 MixinBootstrap.logger.error("Initialising mixin subsystem after game pre-init phase! Some mixins may be skipped.");
                 MixinEnvironment.init(initialPhase);
                 MixinBootstrap.getPlatform().prepare(CommandLineOptions.defaultArgs());
