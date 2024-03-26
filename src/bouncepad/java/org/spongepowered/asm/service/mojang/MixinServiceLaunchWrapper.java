@@ -70,9 +70,9 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     public static final Keys BLACKBOARD_KEY_TWEAKCLASSES = Keys.of("TweakClasses");
     public static final Keys BLACKBOARD_KEY_TWEAKS = Keys.of("Tweaks");
     
-    private static final String MIXIN_TWEAKER_CLASS = MixinServiceAbstract.LAUNCH_PACKAGE + "MixinTweaker";
+    public static final String MIXIN_TWEAKER_CLASS = MixinServiceAbstract.LAUNCH_PACKAGE + "MixinTweaker";
     // Consts
-    private static final String TRANSFORMER_PROXY_CLASS = MixinServiceAbstract.MIXIN_PACKAGE + "transformer.Proxy";
+    public static final String TRANSFORMER_PROXY_CLASS = MixinServiceAbstract.MIXIN_PACKAGE + "transformer.Proxy";
     
     /**
      * Known re-entrant transformers, other re-entrant transformers will

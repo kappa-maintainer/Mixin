@@ -46,9 +46,7 @@ public class MixinContainer {
     
     static {
         GlobalProperties.put(GlobalProperties.Keys.AGENTS, MixinContainer.agentClasses);
-        for (String agent : MixinService.getService().getPlatformAgents()) {
-            MixinContainer.agentClasses.add(agent);
-        }
+        MixinContainer.agentClasses.addAll(MixinService.getService().getPlatformAgents());
         MixinContainer.agentClasses.add("org.spongepowered.asm.launch.platform.MixinPlatformAgentDefault");
     }
     
