@@ -46,8 +46,8 @@ ext.asmVersion = project.hasProperty("asmVersion") ? asmVersion : '9.0'
 ext.legacyForgeAsmVersion = project.hasProperty("legacyForgeAsmVersion") ? asmVersion : '5.0.3'
 
 // Minimum version of Java required
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 
 java {
     modularity.inferModulePath = false

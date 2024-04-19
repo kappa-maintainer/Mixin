@@ -1,2 +1,12 @@
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+	}
+}
+
 rootProject.name = name
 

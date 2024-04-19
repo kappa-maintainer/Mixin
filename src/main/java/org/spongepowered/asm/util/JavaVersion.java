@@ -97,20 +97,26 @@ public abstract class JavaVersion {
      */
     public static final double JAVA_18 = 18.0;
 
-    /**
-     * Version number for Java 19
-     */
-    public static final double JAVA_19 = 19.0;
+	/**
+	 * Version number for Java 19
+	 */
+	public static final double JAVA_19 = 19.0;
 
-    /**
-     * Version number for Java 20
-     */
-    public static final double JAVA_20 = 20.0;
+	/**
+	 * Version number for Java 20
+	 */
+	public static final double JAVA_20 = 20.0;
 
-    /**
-     * Version number for Java 21
-     */
-    public static final double JAVA_21 = 21.0;
+	/**
+	 * Version number for Java 21
+	 */
+	public static final double JAVA_21 = 21.0;
+
+	/**
+	 * Version number for Java 22
+	 */
+	public static final double JAVA_22 = 22.0;
+    
     private static double current = 0.0;
     
     private JavaVersion() {}
@@ -135,7 +141,7 @@ public abstract class JavaVersion {
         if (numberMatcher.find()) {
             return Double.parseDouble(numberMatcher.group());
         }
-        return 1.8;
+        return 1.6;
     }
 
 }

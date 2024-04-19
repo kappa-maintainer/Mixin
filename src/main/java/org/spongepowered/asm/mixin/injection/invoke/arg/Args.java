@@ -31,38 +31,20 @@ import org.spongepowered.asm.mixin.injection.ModifyArgs;
  * documentation for {@link ModifyArgs} for details. Synthetic subclasses are
  * generated at runtime for specific injectors. 
  */
-public class Args {
-    
-    private String desc;
-    
-    /**
-     * Inner index for push arguments in
-     */
-    private int index;
+public abstract class Args {
     
     /**
      * Argument values
      */
-    private Object[] values;
+    protected final Object[] values;
 
     /**
      * Ctor.
      * 
      * @param values argument values
      */
-    public Args(Object... values) {
+    protected Args(Object[] values) {
         this.values = values;
-        this.index = values.length - 1;
-    }
-
-    /**
-     * Ctor.
-     *
-     * @param size argument number
-     */
-    public Args(int size) {
-        values = new Object[size];
-        index = size - 1;
     }
     
     /**
@@ -72,23 +54,6 @@ public class Args {
      */
     public int size() {
         return this.values.length;
-    }
-
-    /**
-     * @param size The number of parameters
-     * @return Args instance
-     */
-    public static Args of(int size) {
-        return new Args(size);
-    }
-
-    /**
-     * @param value The object value to add
-     * @return Args instance
-     */
-    public Args push(Object value) {
-        values[index--] = value;
-        return this;
     }
 
     /**
@@ -123,12 +88,7 @@ public class Args {
      * @throws ArgumentIndexOutOfBoundsException if the specified argument index
      *      is outside the range of available arguments
      */
-    public <T> void set(int index, T value) {
-        if (index > values.length) {
-            throw new ArgumentIndexOutOfBoundsException(index);
-        }
-        values[index] = value;
-    }
+    public abstract <T> void set(int index, T value);
 
     /**
      * Set (modify) all argument values. The number and type of arguments
@@ -137,18 +97,6 @@ public class Args {
      * 
      * @param values Argument values to set
      */
-    public void setAll(Object... values) {
-        if (values.length != this.values.length) {
-            throw new ArgumentCountException(values.length, this.values.length, desc);
-        }
-    }
-
-    /**
-     * @param desc The descriptor of target invocation
-     * @return Args instance
-     */
-    public Args setDesc(String desc) {
-        this.desc = desc;
-        return this;
-    }
+    public abstract void setAll(Object... values);
+    
 }

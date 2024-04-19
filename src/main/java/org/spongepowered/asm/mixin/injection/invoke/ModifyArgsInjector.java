@@ -26,13 +26,14 @@ package org.spongepowered.asm.mixin.injection.invoke;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
-import org.objectweb.asm.tree.analysis.Frame;
-import org.objectweb.asm.util.Printer;
-import org.objectweb.asm.util.Textifier;
-import org.objectweb.asm.util.TraceMethodVisitor;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 import org.spongepowered.asm.mixin.injection.InjectionPoint.RestrictTargetLevel;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.invoke.arg.ArgsClassGenerator;
+import org.spongepowered.asm.mixin.injection.invoke.util.InvokeUtil;
 import org.spongepowered.asm.mixin.injection.struct.InjectionInfo;
 import org.spongepowered.asm.mixin.injection.struct.InjectionNodes.InjectionNode;
 import org.spongepowered.asm.mixin.injection.struct.Target;
@@ -40,30 +41,15 @@ import org.spongepowered.asm.mixin.injection.struct.Target.Extension;
 import org.spongepowered.asm.mixin.injection.throwables.InvalidInjectionException;
 import org.spongepowered.asm.util.Bytecode;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.Arrays;
 
 /**
  * A bytecode injector which allows a single argument of a chosen method call to
  * be altered. For details see javadoc for {@link ModifyArgs &#64;ModifyArgs}.
  */
 public class ModifyArgsInjector extends InvokeInjector {
-    
-    private static final String ARGS_NAME = "org/spongepowered/asm/mixin/injection/invoke/arg/Args";
-    private static final String FACTORY_DESC = "(I)L" + ARGS_NAME + ";"; 
-    private static final String PUSH_DESC = "(Ljava/lang/Object;)L" + ARGS_NAME + ";";
-    private static final String GET_DESC = "(I)Ljava/lang/Object;";
 
-    private static Printer printer = new Textifier();
-    private static TraceMethodVisitor mp = new TraceMethodVisitor(printer);
-
-    public static String insnToString(AbstractInsnNode insn){
-        insn.accept(mp);
-        StringWriter sw = new StringWriter();
-        printer.print(new PrintWriter(sw));
-        printer.getText().clear();
-        return sw.toString();
-    }
+    private final ArgsClassGenerator argsClassGenerator;
 
     /**
      * @param info Injection info
@@ -71,6 +57,7 @@ public class ModifyArgsInjector extends InvokeInjector {
     public ModifyArgsInjector(InjectionInfo info) {
         super(info, "@ModifyArgs");
         
+        this.argsClassGenerator = info.getMixin().getExtensions().<ArgsClassGenerator>getGenerator(ArgsClassGenerator.class);
     }
     
     /* (non-Javadoc)
@@ -94,37 +81,43 @@ public class ModifyArgsInjector extends InvokeInjector {
     @Override
     protected void injectAtInvoke(Target target, InjectionNode node) {
         MethodInsnNode targetMethod = (MethodInsnNode)node.getCurrentTarget();
-        
-        Type[] args = Type.getArgumentTypes(targetMethod.desc);
-        if (args.length == 0) {
+
+        Type[] originalArgs = InvokeUtil.getOriginalArgs(node);
+        Type[] currentArgs = InvokeUtil.getCurrentArgs(node);
+        if (originalArgs.length == 0) {
             throw new InvalidInjectionException(this.info, "@ModifyArgs injector " + this + " targets a method invocation "
                     + targetMethod.name + targetMethod.desc + " with no arguments!");
         }
-        
+
+        String originalDesc = Type.getMethodDescriptor(Type.VOID_TYPE, originalArgs);
+        String clArgs = this.argsClassGenerator.getArgsClass(originalDesc, this.info.getMixin().getMixin()).getName();
         boolean withArgs = this.verifyTarget(target);
 
         InsnList insns = new InsnList();
         Extension extraStack = target.extendStack().add(1);
-        
-        this.packArgs(insns, targetMethod, args);
-        
+
+        Type[] extraArgs = Arrays.copyOfRange(currentArgs, originalArgs.length, currentArgs.length);
+        int[] extraArgMap = this.storeArgs(target, extraArgs, insns, 0);
+        this.packArgs(insns, clArgs, originalDesc);
+
         if (withArgs) {
             extraStack.add(target.arguments);
             Bytecode.loadArgs(target.arguments, insns, target.isStatic ? 0 : 1);
         }
         
         this.invokeHandler(insns);
-        this.unpackArgs(insns, args);
+        this.unpackArgs(insns, clArgs, originalArgs);
+        this.pushArgs(extraArgs, insns, extraArgMap, 0, extraArgs.length);
         
         extraStack.apply();
         target.insns.insertBefore(targetMethod, insns);
     }
 
     private boolean verifyTarget(Target target) {
-        String shortDesc = String.format("(L%s;)V", ARGS_NAME);
+        String shortDesc = String.format("(L%s;)V", ArgsClassGenerator.ARGS_REF);
         if (!this.methodNode.desc.equals(shortDesc)) {
             String targetDesc = Bytecode.changeDescriptorReturnType(target.method.desc, "V");
-            String longDesc = String.format("(L%s;%s", ARGS_NAME, targetDesc.substring(1));
+            String longDesc = String.format("(L%s;%s", ArgsClassGenerator.ARGS_REF, targetDesc.substring(1));
             
             if (this.methodNode.desc.equals(longDesc)) {
                 return true;
@@ -136,24 +129,9 @@ public class ModifyArgsInjector extends InvokeInjector {
         return false;
     }
 
-    private void packArgs(InsnList insns, MethodInsnNode targetMethod, Type[] args) {
-        if (args.length > 5) {
-            insns.add(new IntInsnNode(Opcodes.BIPUSH, args.length));
-        } else {
-            insns.add(new InsnNode(Opcodes.ICONST_0 + args.length));
-        }
-        insns.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ARGS_NAME, "of", FACTORY_DESC, false));
-        
-        for (int i = args.length - 1; i >= 0; i--) {
-            insns.add(new InsnNode(Opcodes.SWAP));
-            if (Bytecode.getBoxingType(args[i]) != null) {
-                String box = Bytecode.getBoxingType(args[i]);
-                insns.add(new MethodInsnNode(Opcodes.INVOKESTATIC, box, "valueOf", "(" + args[i].getDescriptor() + ")L" + box + ";"));
-            }
-            insns.add(new TypeInsnNode(Opcodes.CHECKCAST, "java/lang/Object"));
-            insns.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, ARGS_NAME, "push", PUSH_DESC, false));
-        }
-        
+    private void packArgs(InsnList insns, String clArgs, String targetDesc) {
+        String factoryDesc = Bytecode.changeDescriptorReturnType(targetDesc, "L" + clArgs + ";");
+        insns.add(new MethodInsnNode(Opcodes.INVOKESTATIC, clArgs, "of", factoryDesc, false));
         insns.add(new InsnNode(Opcodes.DUP));
         
         if (!this.isStatic) {
@@ -162,25 +140,12 @@ public class ModifyArgsInjector extends InvokeInjector {
         }
     }
 
-    private void unpackArgs(InsnList insns, Type[] args) {
+    private void unpackArgs(InsnList insns, String clArgs, Type[] args) {
         for (int i = 0; i < args.length; i++) {
             if (i < args.length - 1) {
                 insns.add(new InsnNode(Opcodes.DUP));
             }
-            if (i > 5) {
-                insns.add(new IntInsnNode(Opcodes.BIPUSH, i));
-            } else {
-                insns.add(new InsnNode(Opcodes.ICONST_0 + i));
-            }
-            insns.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, ARGS_NAME, "get", GET_DESC, false));
-            if (Bytecode.getBoxingType(args[i]) != null) {
-                String boxingType = Bytecode.getBoxingType(args[i]);
-                String unboxingMethod = Bytecode.getUnboxingMethod(args[i]);
-                insns.add(new TypeInsnNode(Opcodes.CHECKCAST, boxingType));
-                insns.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, boxingType, unboxingMethod, "()" + args[i].getDescriptor(), false));
-            } else {
-                insns.add(new TypeInsnNode(Opcodes.CHECKCAST, args[i].getInternalName()));
-            }
+            insns.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, clArgs, ArgsClassGenerator.GETTER_PREFIX + i, "()" + args[i].getDescriptor(), false));
             if (i < args.length - 1) {
                 if (args[i].getSize() == 1) {
                     insns.add(new InsnNode(Opcodes.SWAP));

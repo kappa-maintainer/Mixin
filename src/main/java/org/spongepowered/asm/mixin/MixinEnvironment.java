@@ -92,20 +92,14 @@ public final class MixinEnvironment implements ITokenProvider {
          * "Default" phase, during runtime
          */
         public static final Phase DEFAULT = new Phase(2, "DEFAULT");
-
-        /**
-         * "Mod" phase, after mod discovery
-         */
-        public static final Phase MOD = new Phase(3, "MOD");
         
         /**
          * All phases
          */
         static final List<Phase> phases = ImmutableList.of(
-                Phase.PREINIT,
-                Phase.INIT,
-                Phase.DEFAULT,
-                Phase.MOD
+            Phase.PREINIT,
+            Phase.INIT,
+            Phase.DEFAULT
         );
         
         /**
@@ -147,10 +141,6 @@ public final class MixinEnvironment implements ITokenProvider {
                 }
             }
             return null;
-        }
-
-        public boolean laterThan(Phase another) {
-            return ordinal >= another.ordinal;
         }
 
         MixinEnvironment getEnvironment() {
@@ -762,53 +752,70 @@ public final class MixinEnvironment implements ITokenProvider {
             boolean isSupported() {
                 return JavaVersion.current() >= JavaVersion.JAVA_18 && ASM.isAtLeastVersion(9, 2);
             }
+            
         },
 
-        /**
-         * Java 19 or above is required
-         */
-        JAVA_19(19, Opcodes.V19, LanguageFeatures.METHODS_IN_INTERFACES | LanguageFeatures.PRIVATE_SYNTHETIC_METHODS_IN_INTERFACES
-                | LanguageFeatures.PRIVATE_METHODS_IN_INTERFACES | LanguageFeatures.NESTING | LanguageFeatures.DYNAMIC_CONSTANTS
-                | LanguageFeatures.RECORDS | LanguageFeatures.SEALED_CLASSES) {
+	    /**
+	     * Java 19 or above is required
+	     */
+	    JAVA_19(19, Opcodes.V19, LanguageFeatures.METHODS_IN_INTERFACES | LanguageFeatures.PRIVATE_SYNTHETIC_METHODS_IN_INTERFACES
+		    | LanguageFeatures.PRIVATE_METHODS_IN_INTERFACES | LanguageFeatures.NESTING | LanguageFeatures.DYNAMIC_CONSTANTS
+		    | LanguageFeatures.RECORDS | LanguageFeatures.SEALED_CLASSES) {
 
-            @Override
-            boolean isSupported() {
-                return JavaVersion.current() >= JavaVersion.JAVA_19 && ASM.isAtLeastVersion(9, 3);
-            }
+		    @Override
+		    boolean isSupported() {
+			    return JavaVersion.current() >= JavaVersion.JAVA_19 && ASM.isAtLeastVersion(9, 3);
+		    }
 
-        },
+	    },
 
-        /**
-         * Java 20 or above is required
-         */
-        JAVA_20(20, Opcodes.V20, LanguageFeatures.METHODS_IN_INTERFACES | LanguageFeatures.PRIVATE_SYNTHETIC_METHODS_IN_INTERFACES
-                | LanguageFeatures.PRIVATE_METHODS_IN_INTERFACES | LanguageFeatures.NESTING | LanguageFeatures.DYNAMIC_CONSTANTS
-                | LanguageFeatures.RECORDS | LanguageFeatures.SEALED_CLASSES) {
+	    /**
+	     * Java 20 or above is required
+	     */
+	    JAVA_20(20, Opcodes.V20, LanguageFeatures.METHODS_IN_INTERFACES | LanguageFeatures.PRIVATE_SYNTHETIC_METHODS_IN_INTERFACES
+		    | LanguageFeatures.PRIVATE_METHODS_IN_INTERFACES | LanguageFeatures.NESTING | LanguageFeatures.DYNAMIC_CONSTANTS
+		    | LanguageFeatures.RECORDS | LanguageFeatures.SEALED_CLASSES) {
 
-            @Override
-            boolean isSupported() {
-                return JavaVersion.current() >= JavaVersion.JAVA_20 && ASM.isAtLeastVersion(9, 4);
-            }
+		    @Override
+		    boolean isSupported() {
+			    return JavaVersion.current() >= JavaVersion.JAVA_20 && ASM.isAtLeastVersion(9, 4);
+		    }
 
-        },
+	    },
 
-        /**
-         * Java 21 or above is required
-         */
-        JAVA_21(21, Opcodes.V21, LanguageFeatures.METHODS_IN_INTERFACES | LanguageFeatures.PRIVATE_SYNTHETIC_METHODS_IN_INTERFACES
-                | LanguageFeatures.PRIVATE_METHODS_IN_INTERFACES | LanguageFeatures.NESTING | LanguageFeatures.DYNAMIC_CONSTANTS
-                | LanguageFeatures.RECORDS | LanguageFeatures.SEALED_CLASSES) {
+	    /**
+	     * Java 21 or above is required
+	     */
+	    JAVA_21(21, Opcodes.V21, LanguageFeatures.METHODS_IN_INTERFACES | LanguageFeatures.PRIVATE_SYNTHETIC_METHODS_IN_INTERFACES
+		    | LanguageFeatures.PRIVATE_METHODS_IN_INTERFACES | LanguageFeatures.NESTING | LanguageFeatures.DYNAMIC_CONSTANTS
+		    | LanguageFeatures.RECORDS | LanguageFeatures.SEALED_CLASSES) {
 
-            @Override
-            boolean isSupported() {
-                return JavaVersion.current() >= JavaVersion.JAVA_21 && ASM.isAtLeastVersion(9, 5);
-            }
-        };
+		    @Override
+		    boolean isSupported() {
+			    return JavaVersion.current() >= JavaVersion.JAVA_21 && ASM.isAtLeastVersion(9, 5);
+		    }
+
+	    },
+
+	    /**
+	     * Java 22 or above is required
+	     */
+	    JAVA_22(22, Opcodes.V22, LanguageFeatures.METHODS_IN_INTERFACES | LanguageFeatures.PRIVATE_SYNTHETIC_METHODS_IN_INTERFACES
+		    | LanguageFeatures.PRIVATE_METHODS_IN_INTERFACES | LanguageFeatures.NESTING | LanguageFeatures.DYNAMIC_CONSTANTS
+		    | LanguageFeatures.RECORDS | LanguageFeatures.SEALED_CLASSES) {
+
+		    @Override
+		    boolean isSupported() {
+			    return JavaVersion.current() >= JavaVersion.JAVA_22 && ASM.isAtLeastVersion(9, 6);
+		    }
+
+	    },
+	    ;
         
         /**
          * Default compatibility level to use if not specified by the service 
          */
-        public static CompatibilityLevel DEFAULT = CompatibilityLevel.JAVA_8;
+        public static CompatibilityLevel DEFAULT = CompatibilityLevel.JAVA_6;
         
         /**
          * Maximum compatibility level actually supported. Other compatibility
