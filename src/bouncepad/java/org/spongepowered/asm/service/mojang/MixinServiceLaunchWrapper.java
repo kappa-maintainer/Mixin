@@ -78,11 +78,8 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
      * Known re-entrant transformers, other re-entrant transformers will
      * detected automatically 
      */
-    private static final Set<String> excludeTransformers = Sets.<String>newHashSet(
-        "net.minecraftforge.fml.common.asm.transformers.EventSubscriptionTransformer",
-        "cpw.mods.fml.common.asm.transformers.EventSubscriptionTransformer",
-        "net.minecraftforge.fml.common.asm.transformers.TerminalTransformer",
-        "cpw.mods.fml.common.asm.transformers.TerminalTransformer"
+    private static final Set<String> excludeTransformers = Sets.newHashSet(
+        "net.minecraftforge.fml.common.asm.transformers.EventSubscriptionTransformer"
     );
     
     /**
@@ -602,6 +599,11 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
         }
         
         return 0;
+    }
+
+    @Override
+    public CompatibilityLevel getMinCompatibilityLevel() {
+        return CompatibilityLevel.JAVA_21;
     }
     
 }

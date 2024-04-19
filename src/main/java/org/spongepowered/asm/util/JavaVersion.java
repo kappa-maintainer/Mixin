@@ -135,7 +135,7 @@ public abstract class JavaVersion {
         if (numberMatcher.find()) {
             return Double.parseDouble(numberMatcher.group());
         }
-        return 1.6;
+        return 1.8;
     }
 
 }

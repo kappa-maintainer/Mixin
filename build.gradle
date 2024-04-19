@@ -16,7 +16,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 // Apply plugin
 apply plugin: 'java'
 apply plugin: 'com.github.hierynomus.license'
-apply plugin: 'checkstyle'
 apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -24,7 +23,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'potemkin-modules'
 
 // Default tasks
-defaultTasks 'licenseFormat', 'check', 'build'
+defaultTasks 'licenseFormat', 'build'
 
 // Basic project information
 group = 'com.cleanroommc'
@@ -282,16 +281,6 @@ license {
     }
 }
 
-checkstyle {
-    configProperties = [
-        "name"        : project.name,
-        "organization": project.organization,
-        "url"         : project.url,
-        "year"        : project.inceptionYear
-    ]
-    configFile = file("checkstyle.xml")
-    toolVersion = '8.44'
-}
 
 // Source compiler configuration
 tasks.withType(JavaCompile) {

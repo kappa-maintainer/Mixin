@@ -24,8 +24,6 @@
  */
 package org.spongepowered.asm.bridge;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.function.Function;
 
 import org.objectweb.asm.commons.Remapper;
@@ -52,7 +50,7 @@ public final class RemapperAdapterFML extends RemapperAdapter {
             return typeName;
         }
     }
-    
+
     /**
      * Factory method
      */
