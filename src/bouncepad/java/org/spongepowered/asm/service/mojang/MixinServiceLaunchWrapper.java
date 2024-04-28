@@ -36,7 +36,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
-import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.launch.GlobalProperties.Keys;
 import org.spongepowered.asm.launch.platform.MainAttributes;
 import org.spongepowered.asm.launch.platform.container.ContainerHandleURI;
@@ -45,12 +44,14 @@ import org.spongepowered.asm.launch.platform.container.IContainerHandle;
 import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.mixin.MixinEnvironment.CompatibilityLevel;
 import org.spongepowered.asm.mixin.MixinEnvironment.Phase;
+import org.spongepowered.asm.mixin.transformer.IMixinClassTransformer;
 import org.spongepowered.asm.service.*;
 import org.spongepowered.asm.transformers.MixinClassReader;
 import org.spongepowered.asm.util.Constants;
 import org.spongepowered.asm.util.Files;
 import org.spongepowered.asm.util.perf.Profiler;
 import org.spongepowered.asm.util.perf.Profiler.Section;
+import top.outlands.foundation.IExplicitTransformer;
 import top.outlands.foundation.TransformerDelegate;
 
 import java.io.IOException;
@@ -524,6 +525,16 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
                 this.lock.clear();
                 MixinServiceLaunchWrapper.logger.info("A re-entrant transformer '{}' was detected and will no longer process meta class data",
                         transformer.getName());
+            }
+        }
+
+        PriorityQueue<IExplicitTransformer> explicitTransformers = TransformerDelegate.getExplicitTransformers().get(transformedName);
+        if (explicitTransformers != null) {
+            while (!explicitTransformers.isEmpty()) {
+                IExplicitTransformer transformer = explicitTransformers.poll();
+                if (transformer instanceof IMixinClassTransformer) {
+                    basicClass = transformer.transform(basicClass);
+                }
             }
         }
 

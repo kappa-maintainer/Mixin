@@ -42,7 +42,7 @@ ext.inceptionYear = '2014'
 ext.packaging = 'jar'
 
 // Define variables
-ext.asmVersion = project.hasProperty("asmVersion") ? asmVersion : '9.0'
+ext.asmVersion = project.hasProperty("asmVersion") ? asmVersion : '9.7'
 ext.legacyForgeAsmVersion = project.hasProperty("legacyForgeAsmVersion") ? asmVersion : '5.0.3'
 
 // Minimum version of Java required
@@ -193,7 +193,7 @@ dependencies {
 
     bouncepadImplementation ('org.apache.logging.log4j:log4j-core:2.23.0')
     bouncepadImplementation ('org.ow2.asm:asm-tree:$asmVersion')
-    bouncepadImplementation ('top.outlands:foundation:0.11.1') {
+    bouncepadImplementation ('top.outlands:foundation:0.13.1') {
         exclude module: 'lwjgl'
         exclude module: 'asm-debug-all'
         exclude module: 'jopt-simple'
