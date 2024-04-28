@@ -51,19 +51,29 @@ public class MixinVerifier extends SimpleVerifier {
 
     @Override
     protected boolean isInterface(final Type type) {
-        if (this.currentClass != null && type.equals(this.currentClass)) {
+        if (type.equals(this.currentClass)) {
             return this.isInterface;
         }
-        return ClassInfo.forType(type, TypeLookup.ELEMENT_TYPE).isInterface();
+        ClassInfo classInfo = ClassInfo.forType(type, TypeLookup.ELEMENT_TYPE);
+        if (classInfo == null) {
+            return false;
+        } else {
+            return classInfo.isInterface();
+        }
     }
 
     @Override
     protected Type getSuperClass(final Type type) {
-        if (this.currentClass != null && type.equals(this.currentClass)) {
+        if (type.equals(this.currentClass)) {
             return this.currentSuperClass;
         }
-        ClassInfo c = ClassInfo.forType(type, TypeLookup.ELEMENT_TYPE).getSuperClass();
-        return c == null ? null : Type.getType("L" + c.getName() + ";");
+        ClassInfo classInfo = ClassInfo.forType(type, TypeLookup.ELEMENT_TYPE);
+        if (classInfo == null) {
+            return null;
+        } else {
+            ClassInfo c = classInfo.getSuperClass();
+            return c == null ? null : Type.getType("L" + c.getName() + ";");
+        }
     }
 
     @Override
@@ -71,7 +81,7 @@ public class MixinVerifier extends SimpleVerifier {
         if (type.equals(other)) {
             return true;
         }
-        if (this.currentClass != null && type.equals(this.currentClass)) {
+        if (type.equals(this.currentClass)) {
             if (this.getSuperClass(other) == null) {
                 return false;
             }
@@ -80,13 +90,12 @@ public class MixinVerifier extends SimpleVerifier {
             }
             return this.isAssignableFrom(type, this.getSuperClass(other));
         }
-        if (this.currentClass != null && other.equals(this.currentClass)) {
+        if (other.equals(this.currentClass)) {
             if (this.isAssignableFrom(type, this.currentSuperClass)) {
                 return true;
             }
             if (this.currentClassInterfaces != null) {
-                for (int i = 0; i < this.currentClassInterfaces.size(); ++i) {
-                    Type v = this.currentClassInterfaces.get(i);
+                for (Type v : this.currentClassInterfaces) {
                     if (this.isAssignableFrom(type, v)) {
                         return true;
                     }
@@ -94,6 +103,7 @@ public class MixinVerifier extends SimpleVerifier {
             }
             return false;
         }
+        if (type.getDescriptor().endsWith("Ljava/lang/Object;")) return true;
         ClassInfo typeInfo = ClassInfo.forType(type, TypeLookup.ELEMENT_TYPE);
         if (typeInfo == null) {
             return false;
@@ -101,6 +111,12 @@ public class MixinVerifier extends SimpleVerifier {
         if (typeInfo.isInterface()) {
             typeInfo = ClassInfo.forName("java/lang/Object");
         }
-        return ClassInfo.forType(other, TypeLookup.ELEMENT_TYPE).hasSuperClass(typeInfo);
+        ClassInfo otherInfo = ClassInfo.forType(other, TypeLookup.ELEMENT_TYPE);
+        if (otherInfo == null) {
+            return false;
+        }
+        else {
+            return otherInfo.hasSuperClass(typeInfo);
+        }
     }
 }
