@@ -44,7 +44,6 @@ import org.spongepowered.asm.launch.platform.container.IContainerHandle;
 import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.mixin.MixinEnvironment.CompatibilityLevel;
 import org.spongepowered.asm.mixin.MixinEnvironment.Phase;
-import org.spongepowered.asm.mixin.transformer.IMixinClassTransformer;
 import org.spongepowered.asm.service.*;
 import org.spongepowered.asm.transformers.MixinClassReader;
 import org.spongepowered.asm.util.Constants;
@@ -74,7 +73,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     public static final String MIXIN_TWEAKER_CLASS = MixinServiceAbstract.LAUNCH_PACKAGE + "MixinTweaker";
     // Consts
     public static final String TRANSFORMER_PROXY_CLASS = MixinServiceAbstract.MIXIN_PACKAGE + "transformer.Proxy";
-    
+    private static final Map<String, PriorityQueue<IExplicitTransformer>> explicitTransformers = HashMap.newHashMap(10);
     /**
      * Known re-entrant transformers, other re-entrant transformers will
      * detected automatically 
@@ -353,6 +352,21 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
         return wrapped;
     }
 
+    public static void registerMixinClassTransformer(IExplicitTransformer transformer, String... targets) {
+        if (targets != null) {
+            for (String target : targets) {
+                PriorityQueue<IExplicitTransformer> queue = explicitTransformers.get(target);
+                if (queue == null) {
+                    queue = new PriorityQueue<>();
+                    queue.add(transformer);
+                    explicitTransformers.put(target, queue);
+                } else {
+                    queue.add(transformer);
+                }
+            }
+        }
+    }
+
     /**
      * Returns (and generates if necessary) the transformer delegation list for
      * this environment.
@@ -528,15 +542,14 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
             }
         }
 
-        PriorityQueue<IExplicitTransformer> explicitTransformers = TransformerDelegate.getExplicitTransformers().get(transformedName);
-        if (explicitTransformers != null) {
-            while (!explicitTransformers.isEmpty()) {
-                IExplicitTransformer transformer = explicitTransformers.poll();
-                if (transformer instanceof IMixinClassTransformer) {
-                    basicClass = transformer.transform(basicClass);
-                }
+        PriorityQueue<IExplicitTransformer> queue = explicitTransformers.get(transformedName);
+        if (queue != null) {
+            while (!queue.isEmpty()) {
+                basicClass = queue.poll().transform(basicClass);
             }
+            explicitTransformers.remove(transformedName);
         }
+
 
         return basicClass;
     }
