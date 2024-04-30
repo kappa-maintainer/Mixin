@@ -31,6 +31,7 @@ import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.launch.MixinInitialisationError;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
+import org.spongepowered.asm.mixin.extensibility.IMixinConfigModifier;
 import org.spongepowered.asm.service.MixinService;
 
 import com.google.common.base.Strings;
@@ -186,6 +187,17 @@ public class Config {
      */
     public static Config create(String configFile) {
         return MixinConfig.create(configFile, MixinEnvironment.getDefaultEnvironment());
+    }
+
+    public static void registerConfigModifier(IMixinConfigModifier modifier, String... targets) {
+        if (targets != null) {
+            for (String target : targets) {
+                if (MixinConfig.modifierMap.containsKey(target)) {
+                    logger.warn("Modifier {} attempted to override a modifier that already exists {}", modifier, MixinConfig.modifierMap.get(target));
+                }
+                MixinConfig.modifierMap.put(target, modifier);
+            }
+        }
     }
 
 }
