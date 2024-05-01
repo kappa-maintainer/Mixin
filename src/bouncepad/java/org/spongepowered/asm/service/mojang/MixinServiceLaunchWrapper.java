@@ -357,7 +357,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
             for (String target : targets) {
                 PriorityQueue<IExplicitTransformer> queue = explicitTransformers.get(target);
                 if (queue == null) {
-                    queue = new PriorityQueue<>();
+                    queue = new PriorityQueue<>(Comparator.comparingInt(IExplicitTransformer::getPriority));
                     queue.add(transformer);
                     explicitTransformers.put(target, queue);
                 } else {
