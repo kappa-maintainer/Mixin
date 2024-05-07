@@ -27,10 +27,12 @@ package org.spongepowered.asm.launch;
 import java.io.File;
 import java.util.List;
 
+import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.launch.platform.CommandLineOptions;
 
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import org.spongepowered.asm.mixin.Mixins;
 
 /**
  * TweakClass for running mixins in production. Being a tweaker ensures that we
@@ -51,8 +53,10 @@ public class MixinTweaker implements ITweaker {
      *      java.io.File, java.io.File, java.lang.String)
      */
     @Override
+    @SuppressWarnings("unchecked")
     public final void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
         MixinBootstrap.doInit(CommandLineOptions.ofArgs(args));
+        Mixins.addConfigurations(((List<String>)Launch.blackboard.get("MixinConfigs")).toArray(new String[0]));
     }
 
     /* (non-Javadoc)
