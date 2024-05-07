@@ -56,7 +56,8 @@ public class MixinTweaker implements ITweaker {
     @SuppressWarnings("unchecked")
     public final void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
         MixinBootstrap.doInit(CommandLineOptions.ofArgs(args));
-        Mixins.addConfigurations(((List<String>)Launch.blackboard.get("MixinConfigs")).toArray(new String[0]));
+        if (Launch.blackboard.containsKey("MixinConfigs"))
+            Mixins.addConfigurations(((List<String>)Launch.blackboard.get("MixinConfigs")).toArray(new String[0]));
     }
 
     /* (non-Javadoc)
