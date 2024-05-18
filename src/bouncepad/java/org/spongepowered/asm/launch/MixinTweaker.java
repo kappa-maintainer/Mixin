@@ -26,6 +26,7 @@ package org.spongepowered.asm.launch;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.launchwrapper.Launch;
 import org.spongepowered.asm.launch.platform.CommandLineOptions;
@@ -57,7 +58,7 @@ public class MixinTweaker implements ITweaker {
     public final void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
         MixinBootstrap.doInit(CommandLineOptions.ofArgs(args));
         if (Launch.blackboard.containsKey("MixinConfigs"))
-            Mixins.addConfigurations(((List<String>)Launch.blackboard.get("MixinConfigs")).toArray(new String[0]));
+            Mixins.addConfigurations(((Set<String>)Launch.blackboard.get("MixinConfigs")).toArray(new String[0]));
     }
 
     /* (non-Javadoc)
