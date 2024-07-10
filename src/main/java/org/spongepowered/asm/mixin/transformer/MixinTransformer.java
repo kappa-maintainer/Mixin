@@ -146,10 +146,6 @@ public final class MixinTransformer extends TreeTransformer implements IMixinTra
         return this.extensions;
     }
 
-    @Override
-    public IMixinProcessor getProcessor() {
-        return this.processor;
-    }
 
     /* (non-Javadoc)
      * @see org.spongepowered.asm.service.ITransformer#getName()

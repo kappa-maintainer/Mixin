@@ -125,9 +125,4 @@ public interface IMixinTransformer {
      */
     public abstract IExtensionRegistry getExtensions();
 
-    /**
-     * Get the processor that provided this transformer
-     */
-    public abstract IMixinProcessor getProcessor();
-
 }

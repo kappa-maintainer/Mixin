@@ -37,8 +37,11 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.MixinEnvironment.Option;
 import org.spongepowered.asm.mixin.MixinEnvironment.Phase;
 import org.spongepowered.asm.mixin.Mixins;
-import org.spongepowered.asm.mixin.extensibility.*;
+import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
+import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
+import org.spongepowered.asm.mixin.extensibility.IMixinErrorHandler;
 import org.spongepowered.asm.mixin.extensibility.IMixinErrorHandler.ErrorAction;
+import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.mixin.injection.InjectionPoint;
 import org.spongepowered.asm.mixin.injection.selectors.ITargetSelectorDynamic;
 import org.spongepowered.asm.mixin.throwables.ClassAlreadyLoadedException;
@@ -68,7 +71,7 @@ import org.spongepowered.asm.util.perf.Profiler.Section;
 /**
  * Heart of the Mixin pipeline 
  */
-public class MixinProcessor implements IMixinProcessor {
+class MixinProcessor {
 
     /**
      * Phase during which an error occurred, delegates to functionality in
@@ -173,7 +176,7 @@ public class MixinProcessor implements IMixinProcessor {
     /**
      * Processor extensions
      */
-    public final Extensions extensions;
+    private final Extensions extensions;
     
     /**
      * Hot-Swap agent
@@ -231,21 +234,6 @@ public class MixinProcessor implements IMixinProcessor {
         
         this.profiler = Profiler.getProfiler("mixin");
         this.auditTrail = this.service.getAuditTrail();
-    }
-
-    @Override
-    public IMixinService getMixinService() {
-        return service;
-    }
-
-    @Override
-    public List<IMixinConfig> getMixinConfigs() {
-        return Collections.<IMixinConfig>unmodifiableList(configs);
-    }
-
-    @Override
-    public List<IMixinConfig> getPendingMixinConfigs() {
-        return Collections.<IMixinConfig>unmodifiableList(pendingConfigs);
     }
 
     /**
@@ -501,7 +489,7 @@ public class MixinProcessor implements IMixinProcessor {
      * 
      * @param environment Environment to query
      */
-    public void selectConfigs(MixinEnvironment environment) {
+    private void selectConfigs(MixinEnvironment environment) {
         for (Iterator<Config> iter = Mixins.getConfigs().iterator(); iter.hasNext();) {
             Config handle = iter.next();
             try {
@@ -526,7 +514,7 @@ public class MixinProcessor implements IMixinProcessor {
      * @param environment Environment
      * @return total number of mixins initialised
      */
-    public int prepareConfigs(MixinEnvironment environment, Extensions extensions) {
+    private int prepareConfigs(MixinEnvironment environment, Extensions extensions) {
         int totalMixins = 0;
         
         final IHotSwap hotSwapper = this.hotSwapper;

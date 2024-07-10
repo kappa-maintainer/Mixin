@@ -22,29 +22,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.asm.mixin.injection.invoke.util;
+package org.spongepowered.asm.util.asm;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.spongepowered.asm.mixin.injection.invoke.RedirectInjector;
-import org.spongepowered.asm.mixin.injection.struct.InjectionNodes.InjectionNode;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.tree.LabelNode;
 
-import java.util.Arrays;
+/**
+ * A label node used as a marker in the bytecode. Does not actually visit the
+ * label when visited.
+ */
+public class MarkerNode extends LabelNode {
+    
+    /**
+     * Marks the end of the initialiser in a constructor
+     */
+    public static final int INITIALISER_TAIL = 1;
+    
+    /**
+     * Marks the start of the body in a constructor
+     */
+    public static final int BODY_START = 2;
+    
+    /**
+     * The type for this marker
+     */
+    public final int type;
 
-public class InvokeUtil {
-    public static Type[] getOriginalArgs(InjectionNode node) {
-        return Type.getArgumentTypes(((MethodInsnNode) node.getOriginalTarget()).desc);
+    public MarkerNode(int type) {
+        super(null);
+        this.type = type;
     }
 
-    public static Type[] getCurrentArgs(InjectionNode node) {
-        MethodInsnNode original = (MethodInsnNode) node.getOriginalTarget();
-        MethodInsnNode current = (MethodInsnNode) node.getCurrentTarget();
-        Type[] currentArgs = Type.getArgumentTypes(current.desc);
-        if (node.isReplaced() && node.hasDecoration(RedirectInjector.Meta.KEY) && original.getOpcode() != Opcodes.INVOKESTATIC) {
-            // A redirect on a non-static target method will have an extra arg at the start that we don't care about.
-            return Arrays.copyOfRange(currentArgs, 1, currentArgs.length);
-        }
-        return currentArgs;
+    @Override
+    public void accept(MethodVisitor methodVisitor) {
+        // Noop
     }
+
 }

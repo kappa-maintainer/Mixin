@@ -22,24 +22,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.asm.util;
+package org.spongepowered.asm.mixin.injection.struct;
 
 /**
- * Comparison helpers.
+ * An InjectionNode decoration which can chain to a previously registered
+ * decoration with the same type and key.
+ * 
+ * @param <T> the decoration type
  */
-public final class CompareUtil {
-	private CompareUtil() {
+public interface IChainedDecoration<T> {
+    
+    /**
+     * Called when this decoration replaces a previous decoration with the same
+     * key
+     * 
+     * @param old The previous decoration
+     */
+    public abstract void replace(T old);
 
-	}
-
-	/**
-	 * Officially added in Java 7.
-	 */
-	public static int compare(int a, int b) {
-		return ((a < b) ? -1 : ((a == b) ? 0 : 1));
-	}
-
-	public static int compare(long a, long b) {
-		return ((a < b) ? -1 : ((a == b) ? 0 : 1));
-	}
 }
