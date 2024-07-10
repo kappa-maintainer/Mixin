@@ -176,7 +176,7 @@ public class MixinProcessor {
     /**
      * Processor extensions
      */
-    private final Extensions extensions;
+    public final Extensions extensions;
     
     /**
      * Hot-Swap agent
