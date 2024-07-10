@@ -183,10 +183,9 @@ class MethodMapper {
     private static String getMixinSourceId(MixinInfo mixin, String separator) {
         String sourceId = mixin.getConfig().getCleanSourceId();
         if (sourceId == null) {
-            String modId = GlobalMixinContextQuery.owner(mixin);
-            if (modId == null) {
-                return "";
-            }
+            String modId = GlobalMixinContextQuery.owner(mixin).replaceAll("[^A-Za-z0-9_$]", "_");;
+            if (modId.charAt(0) <= 9)
+                modId = "_" + modId.substring(1);
             return modId + separator;
         }
         if (sourceId.length() > 12) {
