@@ -44,6 +44,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment.Option;
 import org.spongepowered.asm.mixin.MixinEnvironment.Phase;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
+import org.spongepowered.asm.mixin.extensibility.IMixinConfigModifier;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigSource;
 import org.spongepowered.asm.mixin.injection.At;
@@ -192,7 +193,9 @@ final class MixinConfig implements Comparable<MixinConfig>, IMixinConfig {
      * Global list of mixin classes, so we can skip any duplicates
      */
     private static final Set<String> globalMixinList = new HashSet<String>();
-    
+
+    static final Map<String, IMixinConfigModifier> modifierMap = new HashMap<>();
+
     /**
      * Log even more things
      */
@@ -476,7 +479,17 @@ final class MixinConfig implements Comparable<MixinConfig>, IMixinConfig {
             this.overwriteOptions = new OverwriteOptions();
         }
         
-        return this.postInit();
+        boolean success = this.postInit();
+        if (modifierMap.containsKey(name)) {
+            IMixinConfigModifier modifier = modifierMap.get(name);
+            modifier.injectConfig(name);
+            this.mixinClasses = modifier.modifyMixinClasses(this.mixinClasses);
+            this.mixinClassesClient = modifier.modifyMixinClassesClient(this.mixinClassesClient);
+            this.mixinClassesServer = modifier.modifyMixinClassesServer(this.mixinClassesServer);
+            this.env = modifier.modifyEnvironment(this.env);
+            success = modifier.shouldAddMixinConfig(success);
+        }
+        return success;
     }
 
     String getParentName() {
