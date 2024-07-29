@@ -436,7 +436,7 @@ public final class MixinEnvironment implements ITokenProvider {
          * with {@link ClassReader#EXPAND_FRAMES} flag which restores the
          * behaviour from versions 0.8.6 and below, newer versions default to 0.
          */
-        CLASSREADER_EXPAND_FRAMES(Option.TUNABLE, Inherit.INDEPENDENT, "classReaderExpandFrames", true, "false");
+        CLASSREADER_EXPAND_FRAMES(Option.TUNABLE, Inherit.INDEPENDENT, "classReaderExpandFrames", true, "true");
         
         /**
          * Type of inheritance for options
