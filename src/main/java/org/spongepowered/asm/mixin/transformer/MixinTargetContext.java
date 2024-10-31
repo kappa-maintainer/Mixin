@@ -600,7 +600,7 @@ public class MixinTargetContext extends ClassContext implements IMixinContext {
         } else if (this.detachedSuper || this.inheritsFromMixin) {
             if (methodRef.getOpcode() == Opcodes.INVOKESPECIAL) {
                 this.updateStaticBinding(method, methodRef);
-            } else if (methodRef.getOpcode() == Opcodes.INVOKEVIRTUAL && ClassInfo.forName(methodRef.getOwner()).isMixin()) {
+            } else if (methodRef.getOpcode() == Opcodes.INVOKEVIRTUAL && methodRef.ownerIsMixin()) {
                 this.updateDynamicBinding(method, methodRef);
             }
         }
@@ -903,7 +903,7 @@ public class MixinTargetContext extends ClassContext implements IMixinContext {
                         + " but is mixin.");
             }
             methodRef.setOwner(superMethod.getImplementor().getName());
-        } else if (ClassInfo.forName(methodRef.getOwner()).isMixin()) {
+        } else if (methodRef.ownerIsMixin()) {
             throw new MixinTransformerError("Error resolving " + methodRef + " in " + this);
         }
     }

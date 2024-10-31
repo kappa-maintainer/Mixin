@@ -1269,6 +1269,10 @@ public class MixinInfo implements Comparable<MixinInfo>, IMixinInfo {
     Set<String> getInterfaces() {
         return this.getState().getInterfaces();
     }
+
+    int getClassVersion() {
+        return this.getState().getClassNode().version;
+    }
     
     /**
      * Get transformer extensions
