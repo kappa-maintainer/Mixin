@@ -26,21 +26,22 @@ package org.spongepowered.asm.mixin.refmap;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Stack;
 
 import org.spongepowered.asm.logging.ILogger;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.MixinEnvironment.Option;
 import org.spongepowered.asm.service.MixinService;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
+
+import javax.annotation.Nonnull;
 
 /**
  * This adapter is designed to address a problem with mixins when "deobfCompile"
@@ -181,12 +182,7 @@ public final class RemappingReferenceMapper implements IReferenceMapper {
     }
 
     private Map<String, String> getCache(String className) {
-        Map<String, String> classCache = this.cache.get(className);
-        if (classCache == null) {
-            classCache = new HashMap<String, String>();
-            this.cache.put(className, classCache);
-        }
-        return classCache;
+        return this.cache.computeIfAbsent(className, k -> new HashMap<>());
     }
 
     /* (non-Javadoc)
@@ -221,7 +217,7 @@ public final class RemappingReferenceMapper implements IReferenceMapper {
         }
 
         try {
-            Files.readLines(file, Charsets.UTF_8, new LineProcessor<Object>() {
+            Files.asCharSource(file, StandardCharsets.UTF_8).readLines(new LineProcessor<Object>() {
 
 
                 @Override
@@ -230,7 +226,7 @@ public final class RemappingReferenceMapper implements IReferenceMapper {
                 }
 
                 @Override
-                public boolean processLine(String line) throws IOException {
+                public boolean processLine(@Nonnull String line) throws IOException {
                     if (Strings.isNullOrEmpty(line) || !line.startsWith("\t")) {
                         return true;
                     }

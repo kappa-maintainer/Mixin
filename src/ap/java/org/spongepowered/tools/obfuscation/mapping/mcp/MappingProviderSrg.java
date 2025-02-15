@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import javax.annotation.Nonnull;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 
@@ -44,7 +45,7 @@ import com.google.common.io.LineProcessor;
 
 /**
  * Ported from <strong>Srg2Source</strong> (
- * <a href=\"https://github.com/MinecraftForge/Srg2Source\">
+ * <a href=\"<a href="https://github.com/MinecraftForge/Srg2Source">...</a>\">
  * github.com/MinecraftForge/Srg2Source</a>).
  */
 public class MappingProviderSrg extends MappingProvider {
@@ -61,31 +62,36 @@ public class MappingProviderSrg extends MappingProvider {
         final BiMap<MappingField, MappingField> fieldMap = this.fieldMap;
         final BiMap<MappingMethod, MappingMethod> methodMap = this.methodMap;
 
-        Files.readLines(input, Charset.defaultCharset(), new LineProcessor<String>() {
+        Files.asCharSource(input, Charset.defaultCharset()).readLines(new LineProcessor<String>() {
             @Override
             public String getResult() {
                 return null;
             }
             
             @Override
-            public boolean processLine(String line) throws IOException {
+            public boolean processLine(@Nonnull String line) throws IOException {
                 if (Strings.isNullOrEmpty(line) || line.startsWith("#")) {
                     return true;
                 }
     
                 String type = line.substring(0, 2);
                 String[] args = line.substring(4).split(" ");
-    
-                if (type.equals("PK")) {
-                    packageMap.forcePut(args[0], args[1]);
-                } else if (type.equals("CL")) {
-                    classMap.forcePut(args[0], args[1]);
-                } else if (type.equals("FD")) {
-                    fieldMap.forcePut(new MappingFieldSrg(args[0]).copy(), new MappingFieldSrg(args[1]).copy());
-                } else if (type.equals("MD")) {
-                    methodMap.forcePut(new MappingMethod(args[0], args[1]), new MappingMethod(args[2], args[3]));
-                } else {
-                    throw new MixinException("Invalid SRG file: " + input);
+
+                switch (type) {
+                    case "PK":
+                        packageMap.forcePut(args[0], args[1]);
+                        break;
+                    case "CL":
+                        classMap.forcePut(args[0], args[1]);
+                        break;
+                    case "FD":
+                        fieldMap.forcePut(new MappingFieldSrg(args[0]).copy(), new MappingFieldSrg(args[1]).copy());
+                        break;
+                    case "MD":
+                        methodMap.forcePut(new MappingMethod(args[0], args[1]), new MappingMethod(args[2], args[3]));
+                        break;
+                    default:
+                        throw new MixinException("Invalid SRG file: " + input);
                 }
                 
                 return true;

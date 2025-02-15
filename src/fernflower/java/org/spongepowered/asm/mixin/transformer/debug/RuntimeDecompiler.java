@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.jar.Manifest;
 
@@ -131,7 +132,7 @@ public class RuntimeDecompiler extends IFernflowerLogger implements IDecompiler,
         file.getParentFile().mkdirs();
         try {
             this.logger.info("Writing {}", file.getAbsolutePath());
-            Files.write(content, file, Charsets.UTF_8);
+            Files.asCharSink(file, StandardCharsets.UTF_8).write(content);
         } catch (IOException ex) {
             this.writeMessage("Cannot write source file " + file, ex);
         }

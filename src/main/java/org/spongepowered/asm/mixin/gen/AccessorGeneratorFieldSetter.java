@@ -53,10 +53,10 @@ public class AccessorGeneratorFieldSetter extends AccessorGeneratorField {
     
     @Override
     public void validate() {
-        if (Bytecode.hasFlag(this.info.getClassNode(), Opcodes.ACC_INTERFACE)) {
+        if (Bytecode.hasFlag(this.info.getTargetClassNode(), Opcodes.ACC_INTERFACE)) {
             //This will result in a ClassFormatError when the class is verified
             throw new InvalidAccessorException(info, String.format("%s tried to change interface field %s::%s",
-                    this.info, this.info.getClassNode().name, this.targetField.name));
+                    this.info, this.info.getTargetClassNode().name, this.targetField.name));
         }
 
         super.validate();
