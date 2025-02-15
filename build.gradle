@@ -167,7 +167,7 @@ dependencies {
 
     implementation guava
     implementation gson
-    if (Float.parseFloat(asmVersion) < 6) {
+    if (Integer.parseInt(asmVersion.split('\\.')[0]) < 6) {
         implementation "org.ow2.asm:asm-debug-all:$asmVersion"
     }
     implementation "org.ow2.asm:asm-tree:$asmVersion"
