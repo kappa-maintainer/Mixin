@@ -78,7 +78,7 @@ public class MixinAgent implements IHotSwap {
             
             try {
                 MixinAgent.log(Level.INFO, "Redefining class {}", className);
-                return MixinAgent.this.classTransformer.transformClassBytes(null, className, classfileBuffer);
+                return MixinAgent.this.classTransformer.transformClassBytes(null, className.replace('/', '.'), classfileBuffer);
             } catch (Throwable th) {
                 MixinAgent.log(Level.ERROR, "Error while re-transforming class {}", className, th);
                 return MixinAgent.ERROR_BYTECODE;
