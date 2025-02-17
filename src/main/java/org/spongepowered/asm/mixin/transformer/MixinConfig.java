@@ -146,7 +146,7 @@ final class MixinConfig implements Comparable<MixinConfig>, IMixinConfig {
          * if the target method is nonprivate but the merged method is private.
          */
         @SerializedName("conformVisibility")
-        boolean conformAccessModifiers;
+        boolean conformAccessModifiers = true;
         
         /**
          * Changes the default always-overwrite behaviour of mixins to
