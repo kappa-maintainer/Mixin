@@ -36,7 +36,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
+import org.spongepowered.asm.launch.GlobalProperties;
 import org.spongepowered.asm.launch.GlobalProperties.Keys;
+import org.spongepowered.asm.launch.platform.IMixinPlatformServiceAgent;
 import org.spongepowered.asm.launch.platform.MainAttributes;
 import org.spongepowered.asm.launch.platform.container.ContainerHandleURI;
 import org.spongepowered.asm.launch.platform.container.ContainerHandleVirtual;
@@ -71,6 +73,7 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
     public static final Keys BLACKBOARD_KEY_TWEAKS = Keys.of("Tweaks");
     
     public static final String MIXIN_TWEAKER_CLASS = MixinServiceAbstract.LAUNCH_PACKAGE + "MixinTweaker";
+    private static final String STATE_TWEAKER = MixinServiceAbstract.MIXIN_PACKAGE + "EnvironmentStateTweaker";
     // Consts
     public static final String TRANSFORMER_PROXY_CLASS = MixinServiceAbstract.MIXIN_PACKAGE + "transformer.Proxy";
     private static final Map<String, PriorityQueue<IExplicitTransformer>> explicitTransformers = HashMap.newHashMap(10);
@@ -196,6 +199,17 @@ public class MixinServiceLaunchWrapper extends MixinServiceAbstract implements I
         this.getContainersFromClassPath(list);
         this.getContainersFromAgents(list);
         return list.build();
+    }
+
+    @Override
+    public void init() {
+
+        List<String> tweakClasses = GlobalProperties.get(MixinServiceLaunchWrapper.BLACKBOARD_KEY_TWEAKCLASSES);
+        if (tweakClasses != null) {
+            tweakClasses.add(MixinServiceLaunchWrapper.STATE_TWEAKER);
+        }
+
+        super.init();
     }
 
     private void getContainersFromClassPath(Builder<IContainerHandle> list) {
