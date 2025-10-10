@@ -877,16 +877,16 @@ public abstract class InjectionPoint {
     }
 
     private static InjectionPoint shift(IInjectionPointContext context, InjectionPoint point,
-            At.Shift shift, int by) {
-        
+                                        At.Shift shift, int by) {
+
         if (point != null) {
             if (shift == At.Shift.BEFORE) {
-                return new InjectionPoint.Shift(point, -1);
+                return InjectionPoint.before(point);
             } else if (shift == At.Shift.AFTER) {
-                return new InjectionPoint.Shift(point, 1);
+                return InjectionPoint.after(point);
             } else if (shift == At.Shift.BY) {
                 InjectionPoint.validateByValue(context.getMixin(), context.getMethod(), context.getAnnotationNode(), point, by);
-                return new InjectionPoint.Shift(point, by);
+                return InjectionPoint.shift(point, by);
             }
         }
 
