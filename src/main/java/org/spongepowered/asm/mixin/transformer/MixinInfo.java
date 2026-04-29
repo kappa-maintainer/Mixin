@@ -219,22 +219,22 @@ public class MixinInfo implements Comparable<MixinInfo>, IMixinInfo {
          * All interfaces implemented by this mixin, including soft
          * implementations
          */
-        protected final Set<String> interfaces = new HashSet<String>();
+        protected final Set<String> interfaces = new HashSet<>();
 
         /**
          * Interfaces soft-implemented using {@link Implements}
          */
-        protected final List<InterfaceInfo> softImplements = new ArrayList<InterfaceInfo>();
+        protected final List<InterfaceInfo> softImplements = new ArrayList<>();
 
         /**
          * Synthetic inner classes
          */
-        protected final Set<String> syntheticInnerClasses = new HashSet<String>();
+        protected final Set<String> syntheticInnerClasses = new HashSet<>();
         
         /**
          * Non-synthetic inner classes
          */
-        protected final Set<String> innerClasses = new HashSet<String>();
+        protected final Set<String> innerClasses = new HashSet<>();
         
         /**
          * Initial ClassNode created for mixin validation, not used for actual
@@ -1309,7 +1309,7 @@ public class MixinInfo implements Comparable<MixinInfo>, IMixinInfo {
             IClassTracker tracker = this.service.getClassTracker();
             if (tracker != null) {
                 String restrictions = tracker.getClassRestrictions(mixinClassName);
-                if (restrictions.length() > 0) {
+                if (!restrictions.isEmpty()) {
                     this.logger.error("Classloader restrictions [{}] encountered loading {}, name: {}", restrictions, this, mixinClassName);
                 }
             }

@@ -736,15 +736,14 @@ class MixinPreProcessorStandard {
         IActivity methodActivity = this.activities.begin("method");
         for (MethodNode mixinMethod : this.classNode.methods) {
             methodActivity.next("Method %s", mixinMethod);
-            for (Iterator<AbstractInsnNode> iter = mixinMethod.instructions.iterator(); iter.hasNext();) {
-                AbstractInsnNode insn = iter.next();
+            for (AbstractInsnNode insn : mixinMethod.instructions) {
                 IActivity activity = this.activities.begin(Bytecode.getOpcodeName(insn));
                 if (insn instanceof MethodInsnNode) {
-                    this.transformMethod((MethodInsnNode)insn);
+                    this.transformMethod((MethodInsnNode) insn);
                 } else if (insn instanceof FieldInsnNode) {
-                    this.transformField((FieldInsnNode)insn);
+                    this.transformField((FieldInsnNode) insn);
                 } else if (insn instanceof InvokeDynamicInsnNode) {
-                    this.transformInvokeDynamic((InvokeDynamicInsnNode)insn);
+                    this.transformInvokeDynamic((InvokeDynamicInsnNode) insn);
                 }
                 activity.end();
             }

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.logging.ILogger;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
@@ -100,6 +101,7 @@ final class InnerClassGenerator implements IClassGenerator {
         private int loadCounter;
 
         InnerClassInfo(IMixinInfo mixin, ClassInfo targetClass, ClassInfo nestHost, String originalName, String name, MixinInfo owner) {
+            super(Opcodes.ASM9);
             this.mixin = mixin;
             this.targetClassInfo = targetClass;
             this.originalName = originalName;

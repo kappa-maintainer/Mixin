@@ -77,7 +77,7 @@ class LegacyTransformerHandle implements ILegacyClassTransformer {
      */
     @Override
     public byte[] transformClassBytes(String name, String transformedName, byte[] basicClass) {
-        return this.transformer.transform(name, transformedName, basicClass);
+        return this.transformer.transform(name, transformedName, basicClass, null, null);
     }
     
 }

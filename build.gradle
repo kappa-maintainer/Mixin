@@ -6,8 +6,8 @@ buildscript {
     }
     dependencies {
         classpath 'gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:0.16.1'
-        classpath 'com.github.johnrengelman:shadow:8.1.1'
-        classpath 'com.guardsquare:proguard-gradle:' + (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11) ? '7.4.0' : '7.1.0')
+        classpath 'com.gradleup.shadow:com.gradleup.shadow.gradle.plugin:9.4.1'
+        classpath 'com.guardsquare:proguard-gradle:7.9.1'
     }
 }
 
@@ -15,19 +15,21 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 // Apply plugin
 apply plugin: 'java'
-apply plugin: 'com.github.hierynomus.license'
+//apply plugin: 'com.github.hierynomus.license'
 apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'com.gradleup.shadow'
 apply plugin: 'potemkin-modules'
 
 // Default tasks
-defaultTasks 'licenseFormat', 'build'
+//defaultTasks 'licenseFormat', 'build'
 
 // Basic project information
 group = 'com.cleanroommc'
-archivesBaseName = 'sponge-mixin'
+base {
+    archivesName = 'sponge-mixin'
+}
 version = buildVersion + "+mixin." + upstreamMixinVersion
 
 
@@ -45,11 +47,11 @@ ext.packaging = 'jar'
 ext.asmVersion = project.hasProperty("asmVersion") ? asmVersion : '9.7'
 ext.legacyForgeAsmVersion = project.hasProperty("legacyForgeAsmVersion") ? asmVersion : '5.0.3'
 
-// Minimum version of Java required
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
-
 java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
     modularity.inferModulePath = false
 }
 
@@ -78,22 +80,6 @@ repositories {
         //Bouncepad
         name = 'Outlands Maven'
         url = 'https://maven.outlands.top/releases'
-    }
-}
-
-configurations {
-    stagingJar
-    
-    exampleImplementation       .extendsFrom implementation
-    fernflowerImplementation    .extendsFrom implementation
-    launchwrapperImplementation .extendsFrom implementation
-    bouncepadImplementation     .extendsFrom implementation
-    agentImplementation         .extendsFrom implementation
-
-    proguard {
-        extendsFrom fernflowerImplementation
-        extendsFrom bouncepadImplementation
-        extendsFrom compileClasspath
     }
 }
 
@@ -144,10 +130,26 @@ sourceSets {
     }*/
     bouncepad {
         compileClasspath += main.output
-        ext.languageVersion = 21
-        ext.compatibility = '21'
+        ext.languageVersion = 25
+        ext.compatibility = '25'
     }
 
+}
+
+configurations {
+    stagingJar
+
+    exampleImplementation       .extendsFrom implementation
+    fernflowerImplementation    .extendsFrom implementation
+    launchwrapperImplementation .extendsFrom implementation
+    bouncepadImplementation     .extendsFrom implementation
+    agentImplementation         .extendsFrom implementation
+
+    proguard {
+        extendsFrom fernflowerImplementation
+        extendsFrom bouncepadImplementation
+        extendsFrom compileClasspath
+    }
 }
 
 // Because Mixin aims to support a variety of environments, we have to be able to run with older versions of GSON and Guava that lack official module
@@ -191,7 +193,7 @@ dependencies {
 
     bouncepadImplementation ('org.apache.logging.log4j:log4j-core:2.23.0')
     bouncepadImplementation ('org.ow2.asm:asm-tree:$asmVersion')
-    bouncepadImplementation ('top.outlands:foundation:0.14.3') {
+    bouncepadImplementation ('top.outlands:foundation:0.20.7') {
         exclude module: 'lwjgl'
         exclude module: 'asm-debug-all'
         exclude module: 'jopt-simple'
@@ -263,13 +265,13 @@ processResources {
 }
 
 // License header formatting
+/*
 license {
     ext {
         name = "Mixin"
         organization = "SpongePowered"
         url = "https://www.spongepowered.org"
     }
-    include '**/*.java'
     header file("HEADER.txt")
     sourceSets = project.sourceSets
     ignoreFailures false
@@ -277,7 +279,7 @@ license {
     mapping {
         java = 'SLASHSTAR_STYLE'
     }
-}
+}*/
 
 
 // Source compiler configuration
@@ -405,7 +407,7 @@ publishing {
     publications {
         developer(MavenPublication) { publication ->
             groupId project.group
-            artifactId project.archivesBaseName
+            artifactId 'sponge-mixin'
             version project.version
 
             artifact sourceJar
@@ -454,7 +456,7 @@ publishing {
 }
 
 // A task to ensure that the version being released has not already been released.
-task checkVersion {
+/*task checkVersion {
     doFirst {
         def xml = new URL("https://maven.fabricmc.net/net/fabricmc/sponge-mixin/maven-metadata.xml").text
         def metadata = new XmlSlurper().parseText(xml)
@@ -465,4 +467,4 @@ task checkVersion {
     }
 }
 
-publish.mustRunAfter checkVersion
+publish.mustRunAfter checkVersion*/
